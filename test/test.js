@@ -6,7 +6,7 @@ var PouchDB = require('pouchdb');
 //
 // your plugin goes here
 //
-var thePlugin = require('../client');
+var thePlugin = require('../lib/client');
 PouchDB.adapter('socket', thePlugin);
 
 var chai = require('chai');

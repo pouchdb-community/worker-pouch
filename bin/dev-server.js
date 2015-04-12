@@ -15,7 +15,7 @@ var dotfile = "./test/.test-bundle.js";
 var outfile = "./test/test-bundle.js";
 var watchify = require("watchify");
 var browserify = require('browserify');
-var socketPouch = require('../server');
+var socketPouch = require('../lib/server');
 var w = watchify(browserify(indexfile, {
   cache: {},
   packageCache: {},
