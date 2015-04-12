@@ -4,6 +4,7 @@
 
 var COUCH_HOST = process.env.COUCH_HOST || 'http://127.0.0.1:5984';
 var HTTP_PORT = 8001;
+var SOCKET_PORT = 8080;
 
 var Promise = require('bluebird');
 var request = require('request');
@@ -14,6 +15,7 @@ var dotfile = "./test/.test-bundle.js";
 var outfile = "./test/test-bundle.js";
 var watchify = require("watchify");
 var browserify = require('browserify');
+var socketPouch = require('../server');
 var w = watchify(browserify(indexfile, {
   cache: {},
   packageCache: {},
@@ -26,6 +28,7 @@ bundle();
 
 var filesWritten = false;
 var serverStarted = false;
+var socketServerStarted = false;
 var readyCallback;
 
 function bundle() {
@@ -46,8 +49,16 @@ function bundle() {
   }
 }
 
+function startSocketServer() {
+  socketPouch(SOCKET_PORT);
+  socketServerStarted = true;
+}
+
 function startServers(callback) {
   readyCallback = callback;
+
+  startSocketServer();
+
   // enable CORS globally, because it's easier this way
 
   var corsValues = {
@@ -87,7 +98,7 @@ function startServers(callback) {
 }
 
 function checkReady() {
-  if (filesWritten && serverStarted && readyCallback) {
+  if (filesWritten && serverStarted && socketServerStarted && readyCallback) {
     readyCallback();
   }
 }

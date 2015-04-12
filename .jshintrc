@@ -12,11 +12,12 @@
   "node": true,
   "strict": true,
   "globalstrict": true,
-  "globals": { "Pouch": true},
+  "globals": { "eio": true},
   "white": true,
   "indent": 2,
   "maxlen": 100,
   "predef": [
+    "eio",
     "process",
     "global",
     "require",

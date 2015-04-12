@@ -6,8 +6,8 @@ var PouchDB = require('pouchdb');
 //
 // your plugin goes here
 //
-var thePlugin = require('../');
-PouchDB.plugin(thePlugin);
+var thePlugin = require('../client');
+PouchDB.adapter('socket', thePlugin);
 
 var chai = require('chai');
 chai.use(require("chai-as-promised"));
@@ -18,35 +18,27 @@ chai.use(require("chai-as-promised"));
 chai.should(); // var should = chai.should();
 require('bluebird'); // var Promise = require('bluebird');
 
-var dbs;
-if (process.browser) {
-  dbs = 'testdb' + Math.random() +
-    ',http://localhost:5984/testdb' + Math.round(Math.random() * 100000);
-} else {
-  dbs = process.env.TEST_DB;
-}
-
-dbs.split(',').forEach(function (db) {
-  var dbType = /^http/.test(db) ? 'http' : 'local';
-  tests(db, dbType);
-});
-
-function tests(dbName, dbType) {
-
+function tests() {
   var db;
 
   beforeEach(function () {
-    db = new PouchDB(dbName);
+    db = new PouchDB({
+      url: 'ws://localhost:8080',
+      name: 'testdb_ws',
+      adapter: 'socket'
+    });
     return db;
   });
   afterEach(function () {
     return db.destroy();
   });
-  describe(dbType + ': hello test suite', function () {
-    it('should say hello', function () {
-      return db.sayHello().then(function (response) {
-        response.should.equal('hello');
+  describe('basic test suite', function () {
+    it('should have info', function () {
+      return db.info().then(function (info) {
+        info.db_name.should.equal('testdb_ws');
       });
     });
   });
 }
+
+tests();

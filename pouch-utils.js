@@ -7,6 +7,69 @@ if (typeof window !== 'undefined' && window.PouchDB) {
 } else {
   Promise = typeof global.Promise === 'function' ? global.Promise : require('lie');
 }
+
+exports.lastIndexOf = function (str, char) {
+  for (var i = str.length - 1; i >= 0; i--) {
+    if (str.charAt(i) === char) {
+      return i;
+    }
+  }
+  return -1;
+};
+
+exports.extend = require('pouchdb-extend');
+
+exports.clone = function (obj) {
+  return exports.extend(true, {}, obj);
+};
+
+exports.adapterFun = function (name, callback) {
+  var log = require('debug')('pouchdb:socket');
+
+  function logApiCall(self, name, args) {
+    if (!log.enabled) {
+      return;
+    }
+    var logArgs = [self._db_name, name];
+    for (var i = 0; i < args.length - 1; i++) {
+      logArgs.push(args[i]);
+    }
+    log.apply(null, logArgs);
+
+    // override the callback itself to log the response
+    var origCallback = args[args.length - 1];
+    args[args.length - 1] = function (err, res) {
+      var responseArgs = [self._db_name, name];
+      responseArgs = responseArgs.concat(
+        err ? ['error', err] : ['success', res]
+      );
+      log.apply(null, responseArgs);
+      origCallback(err, res);
+    };
+  }
+
+
+  return exports.toPromise(exports.getArguments(function (args) {
+    if (this._closed) {
+      return Promise.reject(new Error('database is closed'));
+    }
+    var self = this;
+    logApiCall(self, name, args);
+    if (!this.taskqueue.isReady) {
+      return new exports.Promise(function (fulfill, reject) {
+        self.taskqueue.addTask(function (failed) {
+          if (failed) {
+            reject(failed);
+          } else {
+            fulfill(self[name].apply(self, args));
+          }
+        });
+      });
+    }
+    return callback.apply(this, args);
+  }));
+};
+
 /* istanbul ignore next */
 exports.once = function (fun) {
   var called = false;
