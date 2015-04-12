@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "argsarray": "0.0.1",
+    "blob-util": "^1.1.1",
     "bluebird": "^2.9.24",
     "debug": "^2.1.3",
     "inherits": "^2.0.1",
