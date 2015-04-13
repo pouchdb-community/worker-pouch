@@ -3,11 +3,13 @@
 'use strict';
 
 var COUCH_HOST = process.env.COUCH_HOST || 'http://127.0.0.1:5984';
-var HTTP_PORT = 8001;
+var HTTP_PORT = 8000;
+var CORS_PORT = 2020;
 var SOCKET_PORT = 8080;
 
+var cors_proxy = require('corsproxy');
 var Promise = require('bluebird');
-var request = require('request');
+var http_proxy = require('pouchdb-http-proxy');
 var http_server = require("http-server");
 var fs = require('fs');
 var indexfile = "./test/test.js";
@@ -59,32 +61,19 @@ function startServers(callback) {
 
   startSocketServer();
 
-  // enable CORS globally, because it's easier this way
-
-  var corsValues = {
-    '/_config/httpd/enable_cors': 'true',
-    '/_config/cors/origins': '*',
-    '/_config/cors/credentials': 'true',
-    '/_config/cors/methods': 'PROPFIND, PROPPATCH, COPY, MOVE, DELETE, ' +
-      'MKCOL, LOCK, UNLOCK, PUT, GETLIB, VERSION-CONTROL, CHECKIN, ' +
-      'CHECKOUT, UNCHECKOUT, REPORT, UPDATE, CANCELUPLOAD, HEAD, ' +
-      'OPTIONS, GET, POST',
-    '/_config/cors/headers':
-      'Cache-Control, Content-Type, Depth, Destination, ' +
-        'If-Modified-Since, Overwrite, User-Agent, X-File-Name, ' +
-        'X-File-Size, X-Requested-With, accept, accept-encoding, ' +
-        'accept-language, authorization, content-type, origin, referer'
-  };
-
-  Promise.all(Object.keys(corsValues).map(function (key) {
-    var value = corsValues[key];
-    return request({
-      method: 'put',
-      url: COUCH_HOST + key,
-      body: JSON.stringify(value)
+  return new Promise(function (resolve, reject) {
+    http_server.createServer().listen(HTTP_PORT, function (err) {
+      if (err) {
+        return reject(err);
+      }
+      cors_proxy.options = {target: COUCH_HOST};
+      http_proxy.createServer(cors_proxy).listen(CORS_PORT, function (err) {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
     });
-  })).then(function () {
-    return http_server.createServer().listen(HTTP_PORT);
   }).then(function () {
     console.log('Tests: http://127.0.0.1:' + HTTP_PORT + '/test/index.html');
     serverStarted = true;

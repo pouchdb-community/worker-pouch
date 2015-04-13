@@ -1,18 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Mocha Tests</title>
-    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
-    <script src="./bind-polyfill.js"></script>
-    <script src="../node_modules/mocha/mocha.js"></script>
-    <script>
-    mocha.setup('bdd');
-    </script>
-    <script src="./test-bundle.js"></script>
-  </head>
-  <body>
-    <div id="mocha"></div>
-    <script type="text/javascript" src="./webrunner.js"></script>
-  </body>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha</title>
+  <link rel="stylesheet" type="text/css" href="../../node_modules/mocha/mocha.css">
+</head>
+<body>
+<div id="mocha"></div>
+<script src="./bind-polyfill.js"></script>
+<script src="../node_modules/mocha/mocha.js"></script>
+<script src="../node_modules/chai/chai.js"></script>
+<script>
+  mocha.setup({
+    timeout:100000,
+    ui: 'bdd'
+  });
+  var should = chai.should();
+</script>
+<script src='../node_modules/pouchdb/dist/pouchdb.js'></script>
+<script src="./test-bundle.js"></script>
+<script src='../node_modules/pouchdb/tests/integration/utils.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.aa.setup.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.basics.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.constructor.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.changes.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.bulk_docs.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.all_docs.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.events.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.conflicts.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.revs_diff.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.replication.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.sync.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.views.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.taskqueue.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.design_docs.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/browser.info.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.issue221.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.issue3179.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.issue3646.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.http.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.compaction.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.get.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.local_docs.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.attachments.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/browser.migration.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.uuids.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.slash_id.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.reserved.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/browser.worker.js'></script>
+<script type="text/javascript" src="./webrunner.js"></script>
+</body>
 </html>
