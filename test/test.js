@@ -16,3 +16,7 @@ window.PouchDB.adapter('socket', WrappedSocketPouch);*/
 
 window.PouchDB.adapter('socket', SocketPouch);
 window.PouchDB.preferredAdapters = ['socket'];
+
+window.PouchDB = window.PouchDB.defaults({
+  url: 'ws://localhost:8080'
+});
