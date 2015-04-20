@@ -56,6 +56,7 @@ Then you can create a socket-powered PouchDB using:
 
 ```js
 var db = new PouchDB({
+  adapter: 'socket',
   name: 'mydb',
   url: 'ws://localhost:80'
 });
@@ -144,6 +145,7 @@ socketPouchServer.listen(80, {
 
 ```js
 var db = new PouchDB({
+  adapter: 'socket',
   name: 'mydb',
   url: 'ws://localhost:80',
   socketOptions: {}
@@ -160,7 +162,7 @@ So you can replicate using the normal methods:
 
 ```js
 var localDB = new PouchDB('local');
-var remoteDB = new PouchDB({name: 'remote', url: 'ws://localhost:80'});
+var remoteDB = new PouchDB({adapter: 'socket', name: 'remote', url: 'ws://localhost:80'});
 
 // replicate from local to remote
 localDB.replicate.to(remoteDB);
@@ -177,7 +179,7 @@ For details, see the official [`replicate()`](http://pouchdb.com/api.html#replic
 ### Remote API
 
 ```js
-var remoteDB = new PouchDB({name: 'remote', url: 'ws://localhost:80'});
+var remoteDB = new PouchDB({adapter: 'socket', name: 'remote', url: 'ws://localhost:80'});
 ```
 
 You can also talk to this `remoteDB` as if it were a normal PouchDB. All the standard methods like `info()`, `get()`, `put()`, and `putAttachment()` will work. The [Travis tests](https://travis-ci.org/nolanlawson/socket-pouch) run the full PouchDB test suite.
