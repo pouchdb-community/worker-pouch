@@ -25,7 +25,7 @@
     "test-browser": "./bin/test-browser.js",
     "jshint": "jshint -c .jshintrc lib test/test.js",
     "test": "npm run jshint && ./bin/run-test.sh",
-    "build": "mkdirp dist npm run browserify && npm run min",
+    "build": "mkdirp dist && npm run browserify && npm run min",
     "browserify": "browserify client | ./bin/es3ify.js | derequire > dist/socket-pouch.client.js",
     "min": "uglifyjs dist/socket-pouch.client.js -mc > dist/socket-pouch.client.min.js",
     "dev": "browserify test/test.js > test/test-bundle.js && npm run dev-server",
