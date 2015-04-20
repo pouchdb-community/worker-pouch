@@ -1,4 +1,4 @@
-Socket Pouch (Beta)
+SocketPouch (Beta)
 =====
 
 [![Build Status](https://travis-ci.org/nolanlawson/socket-pouch.svg)](https://travis-ci.org/nolanlawson/socket-pouch)
@@ -10,9 +10,9 @@ Introduction
 
 Normally PouchDB and CouchDB replicate using the [CouchDB replication protocol](http://www.replication.io/), which runs over HTTP/HTTPS. This protocol can be quite slow, because it's [very chatty](https://issues.apache.org/jira/browse/COUCHDB-2310).
 
-To speed up replication, Socket Pouch implements this protocol over [WebSockets](https://issues.apache.org/jira/browse/COUCHDB-2310), falling back to normal HTTP long-polling for browsers that don't support WebSockets. This is accomplished using [Engine.io](https://github.com/Automattic/engine.io), the famous core of [Socket.io](http://socket.io/).
+To speed up replication, SocketPouch implements this protocol over [WebSockets](https://issues.apache.org/jira/browse/COUCHDB-2310), falling back to normal HTTP long-polling for browsers that don't support WebSockets. This is accomplished using [Engine.io](https://github.com/Automattic/engine.io), the famous core of [Socket.io](http://socket.io/).
 
-Socket Pouch has two parts:
+SocketPouch has two parts:
 
 * **A Node.js server**, which can create local PouchDBs or proxy to a remote CouchDB
 * **A JavaScript client**, which can run in Node.js or the browser
@@ -22,7 +22,7 @@ Beta warning
 
 This plugin is still pretty experimental (hence the `<1.0.0` version), but you are encouraged to play with it. Note that it currently requires [a special branch of PouchDB](https://github.com/pouchdb/pouchdb/tree/branch-for-socket-pouch) because I need some pull requests to get merged in order for it to work. Hopefully it should be ready in time for PouchDB 3.5.0.
 
-Currently Socket Pouch is passing [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch).
+Currently SocketPouch is passing [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch).
 
 Usage
 ---
@@ -87,7 +87,7 @@ socketPouchServer.listen(80, {}, function () {
 
 * **port**: the port to listen on. You should probably use 80 or 443 if you plan on running this in production; most browsers are finicky about other ports. 8080 may work in Chrome during debugging.
 * **options**: (optional) options object
-  * **remoteUrl**: tells Socket Pouch to act as a proxy for a remote CouchDB at the given URL (rather than creating local PouchDB databases)
+  * **remoteUrl**: tells SocketPouch to act as a proxy for a remote CouchDB at the given URL (rather than creating local PouchDB databases)
   * **pouchCreator**: alternatively, you can supply a custom function that takes a string and returns any PouchDB object however you like. (See examples below.) 
   * **socketOptions**: (optional) options passed passed verbatim to Engine.io. See [their documentation](https://github.com/Automattic/engine.io/#methods) for details.
 * **callback**: (optional) called when the server has started
@@ -174,7 +174,7 @@ You can also talk to this `remoteDB` as if it were a normal PouchDB. All the sta
 
 ### Debugging
 
-Socket Pouch uses [debug](https://github.com/visionmedia/debug) for logging. So in Node.js, you can enable debugging by setting a flag:
+SocketPouch uses [debug](https://github.com/visionmedia/debug) for logging. So in Node.js, you can enable debugging by setting a flag:
 
 ```
 DEBUG=pouchdb:socket:*
@@ -189,9 +189,9 @@ PouchDB.debug.enable('pouchdb:socket:*');
 Binary attachments
 ---
 
-Socket Pouch communicates using the normal Engine.io APIs like `send()` and `on('message')`.
+SocketPouch communicates using the normal Engine.io APIs like `send()` and `on('message')`.
 
-Normally it sends JSON text data, but in the case of attachments, binary data is sent. This means that Socket Pouch is actually more efficient than regular PouchDB replication, which (as of this writing) uses base64-string encoding to send attachments between the client and server.
+Normally it sends JSON text data, but in the case of attachments, binary data is sent. This means that SocketPouch is actually more efficient than regular PouchDB replication, which (as of this writing) uses base64-string encoding to send attachments between the client and server.
 
 Building
 ----
