@@ -14,8 +14,8 @@ To speed up replication, SocketPouch implements this protocol over [WebSockets](
 
 SocketPouch has two parts:
 
-* **A Node.js server**, which can create local PouchDBs or proxy to a remote CouchDB
-* **A JavaScript client**, which can run in Node.js or the browser
+* **A Node.js server**, which can create local PouchDBs or proxy to a remote CouchDB.
+* **A JavaScript client**, which can run in Node.js or the browser.
 
 Beta warning
 ---
@@ -27,9 +27,9 @@ Currently SocketPouch is passing [the full PouchDB test suite](https://travis-ci
 Usage
 ---
 
-    npm install socket-pouch
+    $ npm install socket-pouch
 
-### Server
+#### Server
 
 ```js
 var socketPouchServer = require('socket-pouch/server');
@@ -37,9 +37,9 @@ var socketPouchServer = require('socket-pouch/server');
 socketPouchServer.listen(80);
 ```
 
-### Client
+#### Client
 
-#### Browser
+##### In the browser
     
 When you `npm install socket-pouch`, the client JS file is available at `node_modules/socket-pouch/dist/socket-pouch.client.js`. Or you can just download it from Github above.
 
@@ -59,7 +59,7 @@ var db = new PouchDB({
 });
 ```
 
-#### Node.js/Browserify
+##### In Node.js/Browserify
 
 The same rules apply, but you have to notify PouchDB of the new adapter:
 
@@ -73,7 +73,7 @@ API
 
 ### Server
 
-```
+```js
 var socketPouchServer = require('socket-pouch/server');
 
 socketPouchServer.listen(80, {}, function () {
@@ -91,6 +91,14 @@ socketPouchServer.listen(80, {}, function () {
   * **pouchCreator**: alternatively, you can supply a custom function that takes a string and returns any PouchDB object however you like. (See examples below.) 
   * **socketOptions**: (optional) options passed passed verbatim to Engine.io. See [their documentation](https://github.com/Automattic/engine.io/#methods) for details.
 * **callback**: (optional) called when the server has started
+
+Create a server which creates local PouchDBs, named by the user and placed in the current directory:
+
+```js
+socketPouchServer.listen(80, {}, function () {
+  console.log('server started!');
+});
+```
 
 Create a server which acts as a proxy to a remote CouchDB (or CouchDB-compliant database):
 

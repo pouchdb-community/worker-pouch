@@ -8,6 +8,9 @@ export DEV_SERVER_PID=$!
 
 sleep 10
 
+# TODO: this fixes a weird test in test.views.js
+./node_modules/.bin/mkdirp tmp
+
 # skip migration and defaults tests
 TESTS=$(ls node_modules/pouchdb/tests/integration/test*js | \
   grep -v migration | \
