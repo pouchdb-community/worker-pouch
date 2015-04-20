@@ -53,6 +53,7 @@ function bundle() {
 
 function startSocketServer() {
   socketPouch.listen(SOCKET_PORT, {}, function () {
+    console.log('Socket server started');
     socketServerStarted = true;
     checkReady();
   });

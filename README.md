@@ -1,4 +1,4 @@
-Socket Pouch
+Socket Pouch (Beta)
 =====
 
 [![Build Status](https://travis-ci.org/nolanlawson/socket-pouch.svg)](https://travis-ci.org/nolanlawson/socket-pouch)
@@ -8,7 +8,7 @@ Plugin to allow PouchDB and CouchDB to sync over WebSockets, using [Engine.io](h
 Introduction
 ---
 
-Normally PouchDB and CouchDB replicate using the [CouchDB replication protocol](http://www.replication.io/), which runs over HTTP/HTTPS. This protocol is solid and well-established, but it can also be quite slow, because it's [very chatty](https://issues.apache.org/jira/browse/COUCHDB-2310).
+Normally PouchDB and CouchDB replicate using the [CouchDB replication protocol](http://www.replication.io/), which runs over HTTP/HTTPS. This protocol can be quite slow, because it's [very chatty](https://issues.apache.org/jira/browse/COUCHDB-2310).
 
 To speed up replication, Socket Pouch implements this protocol over [WebSockets](https://issues.apache.org/jira/browse/COUCHDB-2310), falling back to normal HTTP long-polling for browsers that don't support WebSockets. This is accomplished using [Engine.io](https://github.com/Automattic/engine.io), the famous core of [Socket.io](http://socket.io/).
 
@@ -17,11 +17,12 @@ Socket Pouch has two parts:
 * **A Node.js server**, which can create local PouchDBs or proxy to a remote CouchDB
 * **A JavaScript client**, which can run in Node.js or the browser
 
-Caveats
+Beta warning
 ---
 
-This plugin is still pretty experimental (hence the `<1.0.0` version), but you are encouraged to play with it. Note that it currently requires [a special branch of PouchDB](https://github.com/pouchdb/pouchdb/tree/branch-for-socket-pouch) because there were some small pull requests required in order to get it to work. Hopefully it should be ready in time for PouchDB 3.5.0.
+This plugin is still pretty experimental (hence the `<1.0.0` version), but you are encouraged to play with it. Note that it currently requires [a special branch of PouchDB](https://github.com/pouchdb/pouchdb/tree/branch-for-socket-pouch) because I need some pull requests to get merged in order for it to work. Hopefully it should be ready in time for PouchDB 3.5.0.
 
+Currently Socket Pouch is passing [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch).
 
 Usage
 ---
@@ -115,13 +116,15 @@ socketPouchServer.listen(80, {
 
 Note that this `dbName` is supplied by the client ver batim, meaning **it could be dangerous**. In the example above, everything is fine because MemDOWN databases can have any string as a name.
 
-Alternatively, your `pouchCreator` can return a `Promise` if you want to do something asynchronously, such as authenticating the user:
+Alternatively, your `pouchCreator` can return a `Promise` if you want to do something asynchronously, such as authenticating the user. In that case you must wrap the object in `{pouch: yourPouchDB}`:
 
 ```js
 socketPouchServer.listen(80, {
   pouchCreator: function (dbName) {
     return doSomethingAsynchronously().then(function () {
-      return new PouchDB('dbname');
+      return {
+        pouch: new PouchDB('dbname')
+      };
     });
   }
 });
@@ -168,6 +171,20 @@ var remoteDB = new PouchDB({name: 'remote', url: 'ws://localhost:80'});
 ```
 
 You can also talk to this `remoteDB` as if it were a normal PouchDB. All the standard methods like `info()`, `get()`, `put()`, and `putAttachment()` will work. The [Travis tests](https://travis-ci.org/nolanlawson/socket-pouch) run the full PouchDB test suite.
+
+### Debugging
+
+Socket Pouch uses [debug](https://github.com/visionmedia/debug) for logging. So in Node.js, you can enable debugging by setting a flag:
+
+```
+DEBUG=pouchdb:socket:*
+```
+
+In the browser, you can enable debugging by using PouchDB's logger:
+
+```js
+PouchDB.debug.enable('pouchdb:socket:*');
+```
 
 Binary attachments
 ---
