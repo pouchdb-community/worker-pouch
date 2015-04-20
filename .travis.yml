@@ -18,6 +18,7 @@ before_script:
     # and make sure its logging debug
   - "curl -X GET http://127.0.0.1:5984/"
   - "curl -X PUT http://127.0.0.1:5984/_config/log/level -d '\"debug\"'"
+  - "export DEBUG=pouchdb:socket"
 
 after_failure:
   - "curl -X GET http://127.0.0.1:5984/_log?bytes=1000000"
@@ -28,6 +29,11 @@ env:
   - CLIENT=selenium:firefox COMMAND=test
   - CLIENT=selenium:phantomjs COMMAND=test
   - COMMAND=coverage
+
+matrix:
+  allow_failures:
+  - env: COMMAND=coverage
+  fast_finish: true
 
 branches:
   only:

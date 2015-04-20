@@ -1,7 +1,33 @@
-PouchDB Plugin Seed
+Socket Pouch
 =====
 
-[![Build Status](https://travis-ci.org/pouchdb/plugin-seed.svg)](https://travis-ci.org/pouchdb/plugin-seed)
+[![Build Status](https://travis-ci.org/nolanlawson/socket-pouch.svg)](https://travis-ci.org/nolanlawson/socket-pouch)
+
+PouchDB and CouchDB over WebSockets, using [Engine.io](https://github.com/Automattic/engine.io).
+
+Introduction
+---
+
+Normally PouchDB and CouchDB replicate using the [CouchDB replication protocol](http://www.replication.io/), which runs over HTTP/HTTPS. However, the protocol can often be slow, because it's [pretty chatty](https://issues.apache.org/jira/browse/COUCHDB-2310).
+
+To speed up replication, Socket Pouch implements this protocol over [WebSockets](https://issues.apache.org/jira/browse/COUCHDB-2310), falling back to normal HTTP long-polling for browsers that don't support WebSockets. This is accomplished using [Engine.io](https://github.com/Automattic/engine.io), aka the core of [Socket.io](http://socket.io/).
+
+Socket Pouch has two parts:
+
+* **A Node.js server**, which can create local PouchDBs or proxy to a remote CouchDB
+* **A JavaScript client**, which can run in Node.js or the browser
+
+Installation
+
+### Server
+
+    npm install socket-pouch
+
+```js
+
+```
+
+
 
 Fork this project to build your first PouchDB plugin.  It contains everything you need to test in Node, WebSQL, and IndexedDB.  It also includes a Travis config file so you
 can automatically run the tests in Travis.

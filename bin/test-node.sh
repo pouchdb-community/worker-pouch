@@ -1,0 +1,28 @@
+#!/bin/bash
+
+: ${TIMEOUT:=50000}
+: ${REPORTER:="spec"}
+
+node ./bin/dev-server.js &
+export DEV_SERVER_PID=$!
+
+sleep 10
+
+# skip migration and defaults tests
+TESTS=$(ls node_modules/pouchdb/tests/integration/test*js | \
+  grep -v migration | \
+  grep -v defaults | \
+  grep -v issue915 )
+
+mocha \
+  --reporter=$REPORTER \
+  --timeout $TIMEOUT \
+  --require=./test/node.setup.js \
+  --grep=$GREP \
+  $TESTS
+
+EXIT_STATUS=$?
+if [[ ! -z $DEV_SERVER_PID ]]; then
+  kill $DEV_SERVER_PID
+fi
+exit $DEV_SERVER_PID

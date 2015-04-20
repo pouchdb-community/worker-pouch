@@ -21,9 +21,9 @@
     "url": "https://github.com/nolanlawson/socket-pouch/issues"
   },
   "scripts": {
-    "test-node": "TEST_DB=testdb,http://localhost:5984/testdb istanbul test ./node_modules/mocha/bin/_mocha test/test.js",
+    "test-node": "./bin/test-node.sh",
     "test-browser": "./bin/test-browser.js",
-    "jshint": "jshint -c .jshintrc *.js test/test.js",
+    "jshint": "jshint -c .jshintrc lib test/test.js",
     "test": "npm run jshint && ./bin/run-test.sh",
     "build": "mkdirp dist npm run browserify && npm run min",
     "browserify": "browserify index.js | ./bin/es3ify.js | derequire > dist/pouchdb.socket.js",

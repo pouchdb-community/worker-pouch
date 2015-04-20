@@ -23,7 +23,7 @@ var client = {
   platform: tmp[3] || null
 };
 
-var testUrl = 'http://127.0.0.1:8001/test/index.html';
+var testUrl = 'http://127.0.0.1:8000/test/index.html';
 var qs = {};
 
 var sauceClient;
