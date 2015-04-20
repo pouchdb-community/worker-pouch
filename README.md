@@ -186,12 +186,24 @@ In the browser, you can enable debugging by using PouchDB's logger:
 PouchDB.debug.enable('pouchdb:socket:*');
 ```
 
-Binary attachments
+Q & A
 ---
+
+#### How does it communicate?
 
 SocketPouch communicates using the normal Engine.io APIs like `send()` and `on('message')`.
 
 Normally it sends JSON text data, but in the case of attachments, binary data is sent. This means that SocketPouch is actually more efficient than regular PouchDB replication, which (as of this writing) uses base64-string encoding to send attachments between the client and server.
+
+#### Does it work in a web worker or service worker?
+
+Unfortuantely, not at the moment.
+
+#### How does it work?
+
+This is a custom PouchDB adapter. Currently the only known PouchDB adapters were the IndexedDB, WebSQL, LevelDB, and HTTP (Couch) adapters, as well as a quasi-adapter written for [pouchdb-replication-stream](https://github.com/nolanlawson/pouchdb-replication-stream). But I'm trying to make it easier to write arbitrary adapters, and SocketPouch is part of that effort.
+
+So who knows - maybe WebRTC or BLE or p2p Wifi could be up next.
 
 Building
 ----

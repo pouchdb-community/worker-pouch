@@ -25,4 +25,4 @@ EXIT_STATUS=$?
 if [[ ! -z $DEV_SERVER_PID ]]; then
   kill $DEV_SERVER_PID
 fi
-exit $DEV_SERVER_PID
+exit $EXIT_STATUS
