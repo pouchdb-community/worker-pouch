@@ -33,6 +33,7 @@ env:
 matrix:
   allow_failures:
   - env: COMMAND=coverage
+  - env: CLIENT=selenium:phantomjs COMMAND=test
   fast_finish: true
 
 branches:
