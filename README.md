@@ -3,12 +3,12 @@ Socket Pouch
 
 [![Build Status](https://travis-ci.org/nolanlawson/socket-pouch.svg)](https://travis-ci.org/nolanlawson/socket-pouch)
 
-Plugin to allow PouchDB and CouchDB to communicate over WebSockets, using [Engine.io](https://github.com/Automattic/engine.io).
+Plugin to allow PouchDB and CouchDB to sync over WebSockets, using [Engine.io](https://github.com/Automattic/engine.io).
 
 Introduction
 ---
 
-Normally PouchDB and CouchDB replicate using the [CouchDB replication protocol](http://www.replication.io/), which runs over HTTP/HTTPS. This protocol is solid and well-established, but it can also be quite slow because it's [very chatty](https://issues.apache.org/jira/browse/COUCHDB-2310).
+Normally PouchDB and CouchDB replicate using the [CouchDB replication protocol](http://www.replication.io/), which runs over HTTP/HTTPS. This protocol is solid and well-established, but it can also be quite slow, because it's [very chatty](https://issues.apache.org/jira/browse/COUCHDB-2310).
 
 To speed up replication, Socket Pouch implements this protocol over [WebSockets](https://issues.apache.org/jira/browse/COUCHDB-2310), falling back to normal HTTP long-polling for browsers that don't support WebSockets. This is accomplished using [Engine.io](https://github.com/Automattic/engine.io), the famous core of [Socket.io](http://socket.io/).
 
