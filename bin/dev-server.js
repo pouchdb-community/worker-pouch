@@ -52,8 +52,10 @@ function bundle() {
 }
 
 function startSocketServer() {
-  socketPouch(SOCKET_PORT);
-  socketServerStarted = true;
+  socketPouch.listen(SOCKET_PORT, {}, function () {
+    socketServerStarted = true;
+    checkReady();
+  });
 }
 
 function startServers(callback) {

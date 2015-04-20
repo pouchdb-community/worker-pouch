@@ -1,8 +1,8 @@
 {
   "name": "socket-pouch",
   "version": "0.1.0",
-  "description": "PouchDB over websockets (WORK IN PROGRESS)",
-  "main": "index.js",
+  "description": "PouchDB over websockets",
+  "main": "server/index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/nolanlawson/socket-pouch.git"
@@ -26,8 +26,8 @@
     "jshint": "jshint -c .jshintrc lib test/test.js",
     "test": "npm run jshint && ./bin/run-test.sh",
     "build": "mkdirp dist npm run browserify && npm run min",
-    "browserify": "browserify index.js | ./bin/es3ify.js | derequire > dist/pouchdb.socket.js",
-    "min": "uglifyjs dist/pouchdb.socket.js -mc > dist/pouchdb.socket.min.js",
+    "browserify": "browserify client | ./bin/es3ify.js | derequire > dist/socket-pouch.client.js",
+    "min": "uglifyjs dist/socket-pouch.client.js -mc > dist/socket-pouch.client.min.js",
     "dev": "browserify test/test.js > test/test-bundle.js && npm run dev-server",
     "dev-server": "./bin/dev-server.js",
     "coverage": "npm test --coverage && istanbul check-coverage --lines 100 --function 100 --statements 100 --branches 100"
@@ -42,7 +42,7 @@
     "eval": "^0.1.0",
     "inherits": "^2.0.1",
     "lie": "^2.6.0",
-    "pouchdb": "pouchdb/pouchdb#3741-3740",
+    "pouchdb": "pouchdb/pouchdb#branch-for-socket-pouch",
     "pouchdb-binary-util": "^1.0.0",
     "pouchdb-extend": "^0.1.2"
   },
