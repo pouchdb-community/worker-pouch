@@ -22,6 +22,8 @@ Beta warning
 
 This plugin is still pretty experimental (hence the `<1.0.0` version), but you are encouraged to play with it. Note that it currently requires [a special branch of PouchDB](https://github.com/pouchdb/pouchdb/tree/branch-for-socket-pouch) because I need some pull requests to get merged in order for it to work. Hopefully it should be ready in time for PouchDB 3.5.0.
 
+The API may substantially change before 1.0.0. I'd really like to get authentication right, but I haven't figured out yet how best to model it. Suggestions are welcome. :)
+
 Currently SocketPouch is passing [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch).
 
 Usage
