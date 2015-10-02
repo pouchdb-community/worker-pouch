@@ -31,7 +31,8 @@
 <script src='../node_modules/pouchdb/tests/integration/test.revs_diff.js'></script>
 <script src='../node_modules/pouchdb/tests/integration/test.replication.js'></script>
 <script src='../node_modules/pouchdb/tests/integration/test.sync.js'></script>
-<script src='../node_modules/pouchdb/tests/integration/test.views.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.sync_events.js'></script>
+<script src='../node_modules/pouchdb/tests/integration/test.retry.js'></script>
 <script src='../node_modules/pouchdb/tests/integration/test.taskqueue.js'></script>
 <script src='../node_modules/pouchdb/tests/integration/test.design_docs.js'></script>
 <script src='../node_modules/pouchdb/tests/integration/browser.info.js'></script>
@@ -46,8 +47,14 @@
 <script src='../node_modules/pouchdb/tests/integration/test.uuids.js'></script>
 <script src='../node_modules/pouchdb/tests/integration/test.slash_id.js'></script>
 <script src='../node_modules/pouchdb/tests/integration/test.reserved.js'></script>
-<!-- TODO: engine.io apparently doesn't work in a web worker -->
+<!-- web worker test makes no sense here -->
 <!--<script src='../node_modules/pouchdb/tests/integration/browser.worker.js'></script>-->
+<!-- migration test makes no sense here -->
+<!--<script src='../node_modules/pouchdb/tests/integration/browser.migration.js'></script>-->
+<!-- explicitly add in the mapreduce tests -->
+<script src='../node_modules/pouchdb/tests/mapreduce/test.mapreduce.js'></script>
+<script src='../node_modules/pouchdb/tests/mapreduce/test.view.js'></script>
+<script src='../node_modules/pouchdb/tests/mapreduce/test.persisted.js'></script>
 <script type="text/javascript" src="./webrunner.js"></script>
 </body>
 </html>
