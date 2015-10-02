@@ -25,8 +25,8 @@
     "jshint": "jshint -c .jshintrc lib test/test.js",
     "test": "npm run jshint && npm run test-browser",
     "build": "mkdirp dist && npm run browserify && npm run min",
-    "browserify": "browserify client | ./bin/es3ify.js | derequire > dist/pouchdb.worker-pouch.js",
-    "min": "uglifyjs dist//pouchdb.worker-pouch.js -mc > dist//pouchdb.worker-pouch.min.js",
+    "browserify": "browserify -p bundle-collapser/plugin client | ./bin/es3ify.js | derequire > dist/pouchdb.worker-pouch.js",
+    "min": "UGLIFY=1 browserify -p bundle-collapser/plugin client | ./bin/es3ify.js | derequire | uglifyjs -mc > dist/pouchdb.worker-pouch.min.js",
     "dev": "browserify test/test.js > test/test-bundle.js && npm run dev-server",
     "dev-server": "./bin/dev-server.js",
     "coverage": "npm test --coverage && istanbul check-coverage --lines 100 --function 100 --statements 100 --branches 100"
@@ -39,11 +39,13 @@
     "lie": "^2.6.0",
     "pouchdb": "^4.0.3",
     "pouchdb-binary-util": "^1.0.0",
-    "workerify": "^0.3.0"
+    "through2": "^2.0.0",
+    "uglifyify": "^3.0.1"
   },
   "devDependencies": {
     "bluebird": "^2.9.24",
     "browserify": "^9.0.8",
+    "bundle-collapser": "1.2.1",
     "chai": "^1.9.1",
     "corsproxy": "^0.2.14",
     "derequire": "^2.0.0",
@@ -64,6 +66,8 @@
     "wd": "^0.2.21"
   },
   "browserify": {
-    "transform": ["workerify"]
+    "transform": [
+      "./lib/workerify"
+    ]
   }
 }
