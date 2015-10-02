@@ -15,16 +15,6 @@ module.exports = function createWorker(b64) {
     return URLCompat.createObjectURL(blob);
   }
 
-  // thanks to operative.js for this snippet
-  function supportsWorkersViaBlob() {
-    try {
-      new Worker(makeBlobURI(';'));
-    } catch (e) {
-      return false;
-    }
-    return true;
-  }
-
   var blob = createBlob([atob(b64)], {type: 'text/javascript'});
   return new Worker(makeBlobURI(blob));
 };
