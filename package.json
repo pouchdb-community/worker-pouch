@@ -1,33 +1,32 @@
 {
-  "name": "socket-pouch",
-  "version": "0.2.0",
-  "description": "PouchDB over websockets",
-  "main": "server/index.js",
+  "name": "worker-pouch",
+  "version": "0.1.0",
+  "description": "PouchDB over a web worker",
+  "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/nolanlawson/socket-pouch.git"
+    "url": "git://github.com/nolanlawson/worker-pouch.git"
   },
   "keywords": [
     "pouch",
     "pouchdb",
     "plugin",
-    "seed",
+    "worker",
     "couch",
     "couchdb"
   ],
   "author": "",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/nolanlawson/socket-pouch/issues"
+    "url": "https://github.com/nolanlawson/worker-pouch/issues"
   },
   "scripts": {
-    "test-node": "./bin/test-node.sh",
     "test-browser": "./bin/test-browser.js",
     "jshint": "jshint -c .jshintrc lib test/test.js",
-    "test": "npm run jshint && ./bin/run-test.sh",
+    "test": "npm run jshint && npm run test-browser",
     "build": "mkdirp dist && npm run browserify && npm run min",
-    "browserify": "browserify client | ./bin/es3ify.js | derequire > dist/socket-pouch.client.js",
-    "min": "uglifyjs dist/socket-pouch.client.js -mc > dist/socket-pouch.client.min.js",
+    "browserify": "browserify client | ./bin/es3ify.js | derequire > dist/pouchdb.worker-pouch.js",
+    "min": "uglifyjs dist//pouchdb.worker-pouch.js -mc > dist//pouchdb.worker-pouch.min.js",
     "dev": "browserify test/test.js > test/test-bundle.js && npm run dev-server",
     "dev-server": "./bin/dev-server.js",
     "coverage": "npm test --coverage && istanbul check-coverage --lines 100 --function 100 --statements 100 --branches 100"
@@ -35,16 +34,13 @@
   "dependencies": {
     "argsarray": "0.0.1",
     "blob-util": "^1.1.1",
-    "bluebird": "^2.9.24",
     "debug": "^2.1.3",
-    "engine.io": "^1.5.1",
-    "engine.io-client": "^1.5.1",
-    "eval": "^0.1.0",
     "inherits": "^2.0.1",
     "lie": "^2.6.0",
-    "pouchdb": "pouchdb/pouchdb#branch-for-socket-pouch",
+    "pouchdb": "^4.0.3",
     "pouchdb-binary-util": "^1.0.0",
-    "pouchdb-extend": "^0.1.2"
+    "pouchdb-extend": "^0.1.2",
+    "workerify": "^0.3.0"
   },
   "devDependencies": {
     "browserify": "^9.0.8",
@@ -68,7 +64,7 @@
     "watchify": "^3.1.0",
     "wd": "^0.2.21"
   },
-  "browser": {
-    "./lib/shared/buffer.js": "./lib/shared/buffer-browser.js"
+  "browserify": {
+    "transform": ["workerify"]
   }
 }

@@ -5,7 +5,6 @@
 var COUCH_HOST = process.env.COUCH_HOST || 'http://127.0.0.1:5984';
 var HTTP_PORT = 8000;
 var CORS_PORT = 2020;
-var SOCKET_PORT = 8080;
 
 var cors_proxy = require('corsproxy');
 var Promise = require('bluebird');
@@ -17,7 +16,6 @@ var dotfile = "./test/.test-bundle.js";
 var outfile = "./test/test-bundle.js";
 var watchify = require("watchify");
 var browserify = require('browserify');
-var socketPouch = require('../lib/server');
 var w = watchify(browserify(indexfile, {
   cache: {},
   packageCache: {},
@@ -30,7 +28,6 @@ bundle();
 
 var filesWritten = false;
 var serverStarted = false;
-var socketServerStarted = false;
 var readyCallback;
 
 function bundle() {
@@ -51,18 +48,8 @@ function bundle() {
   }
 }
 
-function startSocketServer() {
-  socketPouch.listen(SOCKET_PORT, {}, function () {
-    console.log('Socket server started');
-    socketServerStarted = true;
-    checkReady();
-  });
-}
-
 function startServers(callback) {
   readyCallback = callback;
-
-  startSocketServer();
 
   return new Promise(function (resolve, reject) {
     http_server.createServer().listen(HTTP_PORT, function (err) {
@@ -90,7 +77,7 @@ function startServers(callback) {
 }
 
 function checkReady() {
-  if (filesWritten && serverStarted && socketServerStarted && readyCallback) {
+  if (filesWritten && serverStarted && readyCallback) {
     readyCallback();
   }
 }
