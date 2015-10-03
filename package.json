@@ -47,7 +47,7 @@
     "browserify": "^9.0.8",
     "bundle-collapser": "1.2.1",
     "chai": "^2.3.0",
-    "chai-as-promised": "5.1.0",
+    "chai-as-promised": "^5.1.0",
     "corsproxy": "^0.2.14",
     "derequire": "^2.0.0",
     "es3ify": "^0.1.3",
