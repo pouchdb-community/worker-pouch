@@ -5,6 +5,10 @@ services:
 
 node_js:
   - "0.12"
+
+addons:
+  firefox: "latest"
+
 script: npm run $COMMAND
 before_script:
   - "export DISPLAY=:99.0"

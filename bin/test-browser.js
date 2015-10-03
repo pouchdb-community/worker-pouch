@@ -24,7 +24,7 @@ var client = {
 };
 
 var testUrl = 'http://127.0.0.1:8000/test/index.html' +
-  '?grep=with%20a%20closure&invert=true';
+  '?grep=3955%7Cclosure&invert=true';
 var qs = {};
 
 var sauceClient;
