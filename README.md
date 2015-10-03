@@ -55,6 +55,10 @@ Q & A
 
 WorkerPouch proxies the normal PouchDB API over to a single global web worker, which is what runs the core PouchDB code. You can debug the worker by looking for a script starting with `blob:` in your dev tools.
 
+#### Can I use it with other plugins?
+
+Not right now, although map/reduce is supported.
+
 Building
 ----
     npm install
