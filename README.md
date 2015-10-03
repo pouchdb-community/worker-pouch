@@ -3,9 +3,9 @@ WorkerPouch (Beta)
 
 [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg)](https://travis-ci.org/nolanlawson/worker-pouch)
 
-Plugin to use PouchDB over web workers. Works transparently in browsers that support workers via Blob URLs, i.e. Firefox and Chrome.
+Plugin to use PouchDB over web workers. Transparently proxies all PouchDB API requests to a web worker, so that all IndexedDB operations are run in a separate thread. Supports Firefox and Chrome.
 
-Basically, you use the PouchDB API exactly as you're used to using it, but everything is less janky because all database operations are proxied over to a web worker.
+Basically, you use the PouchDB API exactly as you're used to, but your UI will experience less interruptions, because most of PouchDB's expensive operations are run inside of the web worker.
 
 ```js
 // this pouch is powered by web workers
@@ -40,9 +40,10 @@ The same rules apply, but you have to notify PouchDB of the new adapter:
 var PouchDB = require('pouchdb');
 PouchDB.adapter('worker', require('worker-pouch'));
 
-### Debugging
+Debugging
+-----
 
-WorkerPOuch uses [debug](https://github.com/visionmedia/debug) for logging. So in the browser, you can enable debugging by using PouchDB's logger:
+WorkerPouch uses [debug](https://github.com/visionmedia/debug) for logging. So in the browser, you can enable debugging by using PouchDB's logger:
 
 ```js
 PouchDB.debug.enable('pouchdb:worker:*');
@@ -51,9 +52,13 @@ PouchDB.debug.enable('pouchdb:worker:*');
 Q & A
 ---
 
-#### How does it communicate?
+#### Wait, doesn't PouchDB already work in a web worker?
 
-WorkerPouch proxies the normal PouchDB API over to a single global web worker, which is what runs the core PouchDB code. You can debug the worker by looking for a script starting with `blob:` in your dev tools.
+Yes, you can use pure PouchDB inside of a web worker. But the point of this plugin is to let you use PouchDB from *outside a web worker*, and then have it transparently proxy to another PouchDB that is isolated in a web worker.
+
+#### What browsers are supported?
+
+Only those browsers that 1) allow blob URLs for web worker scripts, and 2) allow IndexedDB inside of a web worker. Today, that means Chrome and Firefox.
 
 #### Can I use it with other plugins?
 
