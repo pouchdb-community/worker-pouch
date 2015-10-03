@@ -23,7 +23,8 @@ var client = {
   platform: tmp[3] || null
 };
 
-var testUrl = 'http://127.0.0.1:8000/test/index.html';
+var testUrl = 'http://127.0.0.1:8000/test/index.html' +
+  '?grep=with%20a%20closure&invert=true';
 var qs = {};
 
 var sauceClient;
