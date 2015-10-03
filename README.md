@@ -1,11 +1,13 @@
-WorkerPouch (Beta)
+WorkerPouch (Beta) [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg)](https://travis-ci.org/nolanlawson/worker-pouch)
 =====
 
-[![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg)](https://travis-ci.org/nolanlawson/worker-pouch)
+Plugin to use PouchDB over web workers. It transparently proxies all PouchDB API requests to a web worker, so that all IndexedDB and XHR operations are run in a separate thread. Supports Firefox and Chrome.
 
-Plugin to use PouchDB over web workers. Transparently proxies all PouchDB API requests to a web worker, so that all IndexedDB operations are run in a separate thread. Supports Firefox and Chrome.
+Basically, WorkerPouch allows you use the PouchDB API exactly as you're used to, but your UI will experience less interruptions, because most of PouchDB's expensive operations are run inside of a worker. You don't need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 
-Basically, you use the PouchDB API exactly as you're used to, but your UI will experience less interruptions, because most of PouchDB's expensive operations are run inside of the web worker.
+WorkerPouch passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch). It requires PouchDB 5.0.0+.
+
+IE, Edge, Safari, and iOS are not supported due to browser bugs. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/).
 
 ```js
 // this pouch is powered by web workers
@@ -17,7 +19,7 @@ Usage
 
     $ npm install worker-pouch
     
-When you `npm install worker-pouch`, the client JS file is available at `node_modules/worker-pouch/dist/pouchdb.worker-pouch.js`. Or you can just download it from Github above.
+When you `npm install worker-pouch`, the client JS file is available at `node_modules/worker-pouch/dist/pouchdb.worker-pouch.js`. Or you can just download it from Github above (in which case, it will be available as `window.workerPouch`).
 
 Then include it in your HTML, after PouchDB:
 
@@ -39,6 +41,42 @@ The same rules apply, but you have to notify PouchDB of the new adapter:
 ```js
 var PouchDB = require('pouchdb');
 PouchDB.adapter('worker', require('worker-pouch'));
+
+Detecting browser support
+----
+
+WorkerPouch doesn't support all browsers. So it provides a special API to dianogose whether or not the current browser supports WorkerPouch. Here's how you can use it:
+
+```js
+var workerPouch = require('worker-pouch');
+
+workerPouch.isSupportedBrowser().then(function (supported) {
+  var db;
+  if (supported) {
+    db = new PouchDB('mydb', {adapter: 'worker'});
+  } else { // fall back to a normal PouchDB
+	db = new PouchDB('mydb');
+  }  
+}).catch(console.log.bind(console)); // shouldn't throw an error
+```
+
+The `isSupportedBrowser()` API returns a Promise for a boolean, which will be `true` if the browser is supported and `false` otherwise.
+
+If you are using this method to return the PouchDB object *itself* from a Promise, be sure to wrap it in an object, to avoid "circular promise" errors:
+
+```js
+var workerPouch = require('worker-pouch');
+
+workerPouch.isSupportedBrowser().then(function (supported) {
+  if (supported) {
+    return {db: new PouchDB('mydb', {adapter: 'worker'})};
+  } else { // fall back to a normal PouchDB
+	return {db: new PouchDB('mydb')};
+  }
+}).then(function (dbWrapper) {
+  var db = dbWrapper.db; // now I have a PouchDB
+}).catch(console.log.bind(console)); // shouldn't throw an error
+```
 
 Debugging
 -----
@@ -66,6 +104,7 @@ Not right now, although map/reduce is supported.
 
 Building
 ----
+
     npm install
     npm run build
 

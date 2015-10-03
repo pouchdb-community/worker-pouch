@@ -25,8 +25,8 @@
     "jshint": "jshint -c .jshintrc lib test/test.js",
     "test": "npm run jshint && npm run test-browser",
     "build": "mkdirp dist && npm run browserify && npm run min",
-    "browserify": "browserify -p bundle-collapser/plugin client | ./bin/es3ify.js | derequire > dist/pouchdb.worker-pouch.js",
-    "min": "UGLIFY=1 browserify -p bundle-collapser/plugin client | ./bin/es3ify.js | derequire | uglifyjs -mc > dist/pouchdb.worker-pouch.min.js",
+    "browserify": "browserify -s workerPouch -p bundle-collapser/plugin client | ./bin/es3ify.js | derequire > dist/pouchdb.worker-pouch.js",
+    "min": "UGLIFY=1 browserify -s workerPouch -p bundle-collapser/plugin client | ./bin/es3ify.js | derequire | uglifyjs -mc > dist/pouchdb.worker-pouch.min.js",
     "dev": "browserify test/test.js > test/test-bundle.js && npm run dev-server",
     "dev-server": "./bin/dev-server.js",
     "coverage": "npm test --coverage && istanbul check-coverage --lines 100 --function 100 --statements 100 --branches 100"

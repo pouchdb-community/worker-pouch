@@ -7,3 +7,5 @@ window.PouchDB = require('pouchdb');
 
 window.PouchDB.adapter('worker', WorkerPouch);
 window.PouchDB.preferredAdapters = ['worker'];
+
+window.workerPouch = WorkerPouch;
