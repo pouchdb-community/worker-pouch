@@ -37,10 +37,6 @@ if (client.runner === 'saucelabs') {
 if (process.env.GREP) {
   qs.grep = process.env.GREP;
 }
-if (process.env.INVERT) {
-  qs.invert = process.env.INVERT;
-}
-
 testUrl += '?';
 testUrl += querystring.stringify(qs);
 

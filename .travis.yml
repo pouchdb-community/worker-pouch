@@ -17,8 +17,7 @@ before_script:
 
 env:
   matrix:
-  - CLIENT=selenium:firefox GREP=suite2 INVERT=true COMMAND=test
-  - CLIENT=selenium:firefox GREP=suite2 COMMAND=test
+  - CLIENT=selenium:firefox COMMAND=test
 
 branches:
   only:
