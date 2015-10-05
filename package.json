@@ -37,7 +37,7 @@
     "debug": "^2.1.3",
     "inherits": "^2.0.1",
     "lie": "^2.6.0",
-    "pouchdb": "git://github.com/pouchdb/pouchdb#9d1d873",
+    "pouchdb": "git://github.com/pouchdb/pouchdb#62ecbc6bd2d6e30d6f69987b6dff3a349be9694b",
     "pouchdb-binary-util": "^1.0.0",
     "through2": "^2.0.0",
     "uglifyify": "^3.0.1"
