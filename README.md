@@ -12,7 +12,7 @@ Basically, WorkerPouch allows you use the PouchDB API like you normally would, b
 
 WorkerPouch passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch). It requires PouchDB 5.0.0+.
 
-IE, Edge, Safari, and iOS are not supported due to browser bugs. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/).
+IE, Edge, Safari, and iOS are not supported due to browser bugs. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/). There is also an API to [detect browser support](#detecting-browser-support).
 
 Usage
 ---
