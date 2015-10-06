@@ -41,6 +41,7 @@ The same rules apply, but you have to notify PouchDB of the new adapter:
 ```js
 var PouchDB = require('pouchdb');
 PouchDB.adapter('worker', require('worker-pouch'));
+```
 
 Detecting browser support
 ----
