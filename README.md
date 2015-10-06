@@ -1,6 +1,11 @@
 WorkerPouch (Beta) [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg)](https://travis-ci.org/nolanlawson/worker-pouch)
 =====
 
+```js
+// This pouch is powered by web workers!
+var db = new PouchDB('mydb', {adapter: 'worker'});
+```
+
 Plugin to use PouchDB over web workers. It transparently proxies all PouchDB API requests to a web worker, so that all IndexedDB and XHR operations are run in a separate thread. Supports Firefox and Chrome.
 
 Basically, WorkerPouch allows you use the PouchDB API like you normally would, but your UI will experience less interruptions, because PouchDB's most expensive operations are run inside of a worker. You don't need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
@@ -8,11 +13,6 @@ Basically, WorkerPouch allows you use the PouchDB API like you normally would, b
 WorkerPouch passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch). It requires PouchDB 5.0.0+.
 
 IE, Edge, Safari, and iOS are not supported due to browser bugs. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/).
-
-```js
-// this pouch is powered by web workers
-var db = new PouchDB('mydb', {adapter: 'worker'});
-```
 
 Usage
 ---
