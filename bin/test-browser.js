@@ -28,6 +28,10 @@ if (process.env.SUITE === '1') {
   baseUrl = 'http://127.0.0.1:8000/test/index-suite1.html';
 } else if (process.env.SUITE === '2') {
   baseUrl = 'http://127.0.0.1:8000/test/index-suite2.html';
+} else if (process.env.SUITE === '3') {
+  baseUrl = 'http://127.0.0.1:8000/test/index-suite3.html';
+} else if (process.env.SUITE === '4') {
+  baseUrl = 'http://127.0.0.1:8000/test/index-suite4.html';
 }
 var testUrl = baseUrl + '?grep=3955%7Cclosure&invert=true';
 var qs = {};
