@@ -10,7 +10,7 @@ Plugin to use PouchDB over [web workers](https://developer.mozilla.org/en-US/doc
 
 Basically, WorkerPouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker. You don't even need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 
-WorkerPouch passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch). It requires PouchDB 5.0.0+.
+WorkerPouch passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/worker-pouch). It requires PouchDB 5.0.0+.
 
 IE, Edge, Safari, and iOS are not supported due to browser bugs. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/). There is also an API to [detect browser support](#detecting-browser-support).
 
