@@ -43,6 +43,28 @@ var PouchDB = require('pouchdb');
 PouchDB.adapter('worker', require('worker-pouch'));
 ```
 
+Performance benefits
+----
+
+These numbers were recorded using [this site](http://nolanlawson.github.io/database-comparison-worker-pouch/). The test involved inserting 10000 PouchDB documents, and was run on a 2013 MacBook Air. Browser data was deleted between each test.
+
+| | Time (ms) | Blocked the DOM? |
+| ----- | ------ | ------ |
+| *Chrome 48* | | |
+| &nbsp;&nbsp;&nbsp;`put()` - normal | 50070 | No |
+| &nbsp;&nbsp;&nbsp;`put()` - worker | 56993 | No |
+| &nbsp;&nbsp;&nbsp;`bulkDocs()` - normal | 2740 | Yes |
+| &nbsp;&nbsp;&nbsp;`bulkDocs()` - worker| 3454 | No |
+| *Firefox 43* |  | |
+| &nbsp;&nbsp;&nbsp;`put()` - normal | 39595 | No |
+| &nbsp;&nbsp;&nbsp;`put()` - worker | 41425 | No |
+| &nbsp;&nbsp;&nbsp;`bulkDocs()` - normal | 1027 | Yes |
+| &nbsp;&nbsp;&nbsp;`bulkDocs()` - worker| 1130 | No |
+
+Basic takeaway: `put()`s avoid DOM-blocking (due to using many smaller transactions), but are much slower than `bulkDocs()`. With WorkerPouch, though, you can get nearly all the speed benefit of `bulkDocs()` without blocking the DOM.
+
+(Note that by "blocked the DOM," I mean froze the animated GIF for a significant amount of time - at least a half-second. A single dropped frame was not penalized. Try the test yourself, and you'll see the difference is pretty stark.)
+
 Detecting browser support
 ----
 
