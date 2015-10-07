@@ -8,7 +8,7 @@ var db = new PouchDB('mydb', {adapter: 'worker'});
 
 Plugin to use PouchDB over [web workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker). Transparently proxies all PouchDB API requests to a web worker, so that the most expensive database operations are run in a separate thread. Supports Firefox and Chrome.
 
-Basically, WorkerPouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB, object cloning, or checksumming) are run inside of the worker. You don't even need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+Basically, WorkerPouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker. You don't even need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 
 WorkerPouch passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/socket-pouch). It requires PouchDB 5.0.0+.
 
@@ -124,6 +124,10 @@ Only those browsers that 1) allow blob URLs for web worker scripts, and 2) allow
 #### Can I use it with other plugins?
 
 Not right now, although map/reduce is supported.
+
+#### Don't I pay a heavy cost of structured cloning due to worker messages?
+
+Yes, but apparently this cost is less than that of IndexedDB, because the DOM is significanty less blocked when using WorkerPouch. Another thing to keep in mind is that PouchDB's internal document representation in IndexedDB is more complex than the PouchDB documents you insert. So you clone a small PouchDB object to send it to the worker, and then inside the worker it's exploded into a more complex IndexedDB object. IndexedDB itself has to clone as well, but the more complex cloning is done inside the worker.
 
 Building
 ----
