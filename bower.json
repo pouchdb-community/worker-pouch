@@ -1,0 +1,23 @@
+{
+  "name": "worker-pouch",
+  "description": "PouchDB over a web worker",
+  "main": "dist/pouchdb.worker-pouch.js",
+  "authors": [
+    "Nolan Lawson <nolan.lawson@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "pouch",
+    "pouchdb",
+    "plugin",
+    "worker",
+    "couch",
+    "couchdb"
+  ],
+  "homepage": "https://github.com/nolanlawson/worker-pouch",
+  "moduleType": [
+    "es6",
+    "globals",
+    "node"
+  ]
+}
