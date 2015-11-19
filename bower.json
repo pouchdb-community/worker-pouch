@@ -2,6 +2,14 @@
   "name": "worker-pouch",
   "description": "PouchDB over a web worker",
   "main": "dist/pouchdb.worker-pouch.js",
+  "ignore": [
+    "**/*",
+    "**/.*",
+    "!README.md",
+    "!LICENSE.md",
+    "!dist/pouchdb.worker-pouch.js",
+    "!dist/pouchdb.worker-pouch.min.js"
+  ],
   "authors": [
     "Nolan Lawson <nolan.lawson@gmail.com>"
   ],
