@@ -65,8 +65,7 @@ function startServers(callback) {
       });
     });
   }).then(function () {
-    console.log('Tests: http://127.0.0.1:' + HTTP_PORT + '/test/index.html' +
-      '?grep=3955%7Cclosure&invert=true');
+    console.log('Tests: http://127.0.0.1:' + HTTP_PORT + '/test/index.html');
     serverStarted = true;
     checkReady();
   }).catch(function (err) {
