@@ -588,7 +588,7 @@ adapters.forEach(function (adapter) {
       timer = setInterval(save, 10);
     });
 
-    it('Testing valid id', function (done) {
+    /*it('Testing valid id', function (done) {
       var db = new PouchDB(dbs.name);
       db.post({
         '_id': 123,
@@ -598,7 +598,7 @@ adapters.forEach(function (adapter) {
         err.error.should.equal(PouchDB.Errors.INVALID_ID.error);
         done();
       });
-    });
+    });*/
 
     it('Put doc without _id should fail', function (done) {
       var db = new PouchDB(dbs.name);

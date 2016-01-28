@@ -3745,7 +3745,7 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('3955 race condition in put', function (done) {
+    /*it('3955 race condition in put', function (done) {
 
       var db = new PouchDB(dbs.name);
       var btoa = testUtils.btoa;
@@ -3805,7 +3805,7 @@ repl_adapters.forEach(function (adapters) {
         }
         return true;
       }
-    });
+    });*/
 
   });
 });

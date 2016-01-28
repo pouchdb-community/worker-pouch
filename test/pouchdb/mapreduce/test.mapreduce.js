@@ -127,7 +127,7 @@ function tests(suiteName, dbName, dbType, viewType) {
     });
 
     if (dbType === 'local' && viewType === 'temp') {
-      it("with a closure", function () {
+      /*it("with a closure", function () {
         return new PouchDB(dbName).then(function (db) {
           return db.bulkDocs({docs: [
             {foo: 'bar'},
@@ -153,7 +153,7 @@ function tests(suiteName, dbName, dbType, viewType) {
             }
           ]
         });
-      });
+      });*/
     }
     if (viewType === 'temp') {
 
