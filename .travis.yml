@@ -4,27 +4,31 @@ services:
   - couchdb
 
 node_js:
-  - "0.12"
+  - "stable"
+
+sudo: false
 
 addons:
-  firefox: "latest"
+  firefox: "41.0.1"
 
 script: npm run $COMMAND
+
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  - "sleep 5"
+
+  - "npm install add-cors-to-couchdb"
+  - "./node_modules/.bin/add-cors-to-couchdb"
 
 env:
   matrix:
   # break into many small tests so travis doesn't complain
-  - CLIENT=selenium:firefox SUITE=1 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=2 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=3 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=4 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=5 COMMAND=test
+  - CLIENT=selenium:firefox:41.0.1 SUITE=1 COMMAND=test
+  - CLIENT=selenium:firefox:41.0.1 SUITE=2 COMMAND=test
+  - CLIENT=selenium:firefox:41.0.1 SUITE=3 COMMAND=test
+  - CLIENT=selenium:firefox:41.0.1 SUITE=4 COMMAND=test
+  - CLIENT=selenium:firefox:41.0.1 SUITE=5 COMMAND=test
 
 branches:
   only:
   - master
-  - /^pull*$/
