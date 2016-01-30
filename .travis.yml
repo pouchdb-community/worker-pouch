@@ -28,6 +28,8 @@ env:
   - CLIENT=selenium:firefox:41.0.1 SUITE=3 COMMAND=test
   - CLIENT=selenium:firefox:41.0.1 SUITE=4 COMMAND=test
   - CLIENT=selenium:firefox:41.0.1 SUITE=5 COMMAND=test
+  - CLIENT=selenium:firefox:41.0.1 SUITE=6 COMMAND=test
+  - CLIENT=selenium:firefox:41.0.1 SUITE=7 COMMAND=test
 
 branches:
   only:

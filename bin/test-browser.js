@@ -24,16 +24,9 @@ var client = {
 };
 
 var testUrl = 'http://127.0.0.1:8000/test/index.html';
-if (process.env.SUITE === '1') {
-  testUrl = 'http://127.0.0.1:8000/test/index-suite1.html';
-} else if (process.env.SUITE === '2') {
-  testUrl = 'http://127.0.0.1:8000/test/index-suite2.html';
-} else if (process.env.SUITE === '3') {
-  testUrl = 'http://127.0.0.1:8000/test/index-suite3.html';
-} else if (process.env.SUITE === '4') {
-  testUrl = 'http://127.0.0.1:8000/test/index-suite4.html';
-} else if (process.env.SUITE === '5') {
-  testUrl = 'http://127.0.0.1:8000/test/index-suite5.html';
+if (typeof process.env.SUITE === 'string') {
+  testUrl = 'http://127.0.0.1:8000/test/index-suite' + process.env.SUITE +
+    '.html';
 }
 var qs = {};
 
