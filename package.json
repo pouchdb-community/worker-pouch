@@ -1,6 +1,6 @@
 {
   "name": "worker-pouch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "PouchDB over a web worker",
   "main": "lib/index.js",
   "repository": {
@@ -71,5 +71,8 @@
       "./lib/workerify"
     ]
   },
-  "files": ["lib", "dist"]
+  "files": [
+    "lib",
+    "dist"
+  ]
 }
