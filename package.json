@@ -70,5 +70,6 @@
     "transform": [
       "./lib/workerify"
     ]
-  }
+  },
+  "files": ["lib", "dist"]
 }
