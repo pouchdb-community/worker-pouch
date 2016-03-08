@@ -129,6 +129,27 @@ Not right now, although map/reduce is supported.
 
 Yes, but apparently this cost is less than that of IndexedDB, because the DOM is significanty less blocked when using WorkerPouch. Another thing to keep in mind is that PouchDB's internal document representation in IndexedDB is more complex than the PouchDB documents you insert. So you clone a small PouchDB object to send it to the worker, and then inside the worker it's exploded into a more complex IndexedDB object. IndexedDB itself has to clone as well, but the more complex cloning is done inside the worker.
 
+#### Does replication occur inside the worker?
+
+It's a bit subtle. The answer is **yes**, if you do this:
+
+```js
+var local = new PouchDB('local', {adapter: 'worker'});
+local.replicate.to('http://example.com/db');
+```
+
+However,  the answer is **no** if you do:
+
+```js
+var local = new PouchDB('local', {adapter: 'worker'});
+var remote = new PouchDB('http://example.com/db');
+local.replicate.to(remote);
+```
+
+The reason is that when you create a remote PouchDB using `new PouchDB('http://example.com/db')`, then that runs inside the UI thread. However, when you `.replicate.to('http://example.com/db')`, then that string is passed ver-batim to the worker thread, where `worker-pouch` becomes responsible for creating the remote PouchDB. Hence replication will occur inside of the worker thread.
+
+In general, if you are very concerned about performance implications of what runs inside of the woker vs what runs outside of the worker, you are encouraged to _not_ use `worker-pouch` and to instead just run PouchDB inside a worker and handle message-passing yourself (might I recommend [promise-worker](https://github.com/nolanlawson/promise-worker)?). This is the only way to really ensure that _all_ PouchDB operations are isolated to the worker.
+
 Building
 ----
 
