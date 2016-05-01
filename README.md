@@ -6,11 +6,11 @@ worker-pouch [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg
 var db = new PouchDB('mydb', {adapter: 'worker'});
 ```
 
-Plugin to use PouchDB over [web workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker). Transparently proxies all PouchDB API requests to a web worker, so that the most expensive database operations are run in a separate thread. Supports Firefox and Chrome.
+Adapter plugin to use PouchDB over [web workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker). Transparently proxies all PouchDB API requests to a web worker, so that the most expensive database operations are run in a separate thread. Supports Firefox and Chrome.
 
-Basically, WorkerPouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker. You don't even need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+Basically, worker-pouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker. You don't even need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 
-WorkerPouch passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/worker-pouch). It requires PouchDB 5.0.0+.
+The worker-pouch adapter passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/worker-pouch). It requires PouchDB 5.0.0+.
 
 IE, Edge, Safari, and iOS are not supported due to browser bugs. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/). There is also an API to [detect browser support](#detecting-browser-support).
 
@@ -61,14 +61,14 @@ These numbers were recorded using [this site](http://nolanlawson.github.io/datab
 | &nbsp;&nbsp;&nbsp;`bulkDocs()` - normal | 1027 | Yes |
 | &nbsp;&nbsp;&nbsp;`bulkDocs()` - worker| 1130 | No |
 
-Basic takeaway: `put()`s avoid DOM-blocking (due to using many smaller transactions), but are much slower than `bulkDocs()`. With WorkerPouch, though, you can get nearly all the speed benefit of `bulkDocs()` without blocking the DOM.
+Basic takeaway: `put()`s avoid DOM-blocking (due to using many smaller transactions), but are much slower than `bulkDocs()`. With worker-pouch, though, you can get nearly all the speed benefit of `bulkDocs()` without blocking the DOM.
 
 (Note that by "blocked the DOM," I mean froze the animated GIF for a significant amount of time - at least a half-second. A single dropped frame was not penalized. Try the test yourself, and you'll see the difference is pretty stark.)
 
 Detecting browser support
 ----
 
-WorkerPouch doesn't support all browsers. So it provides a special API to dianogose whether or not the current browser supports WorkerPouch. Here's how you can use it:
+This plugin doesn't support all browsers. So it provides a special API to dianogose whether or not the current browser supports worker-pouch. Here's how you can use it:
 
 ```js
 var workerPouch = require('worker-pouch');
@@ -104,7 +104,7 @@ workerPouch.isSupportedBrowser().then(function (supported) {
 Debugging
 -----
 
-WorkerPouch uses [debug](https://github.com/visionmedia/debug) for logging. So in the browser, you can enable debugging by using PouchDB's logger:
+worker-pouch uses [debug](https://github.com/visionmedia/debug) for logging. So in the browser, you can enable debugging by using PouchDB's logger:
 
 ```js
 PouchDB.debug.enable('pouchdb:worker:*');
@@ -127,7 +127,7 @@ Not right now, although map/reduce is supported.
 
 #### Don't I pay a heavy cost of structured cloning due to worker messages?
 
-Yes, but apparently this cost is less than that of IndexedDB, because the DOM is significanty less blocked when using WorkerPouch. Another thing to keep in mind is that PouchDB's internal document representation in IndexedDB is more complex than the PouchDB documents you insert. So you clone a small PouchDB object to send it to the worker, and then inside the worker it's exploded into a more complex IndexedDB object. IndexedDB itself has to clone as well, but the more complex cloning is done inside the worker.
+Yes, but apparently this cost is less than that of IndexedDB, because the DOM is significanty less blocked when using worker-pouch. Another thing to keep in mind is that PouchDB's internal document representation in IndexedDB is more complex than the PouchDB documents you insert. So you clone a small PouchDB object to send it to the worker, and then inside the worker it's exploded into a more complex IndexedDB object. IndexedDB itself has to clone as well, but the more complex cloning is done inside the worker.
 
 #### Does replication occur inside the worker?
 
