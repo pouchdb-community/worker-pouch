@@ -933,7 +933,7 @@ module.exports = function clone(object) {
 };
 
 },{}],7:[function(_dereq_,module,exports){
-(function (process){
+(function (process,global){
 'use strict';
 
 var Promise = _dereq_(16);
@@ -955,7 +955,9 @@ exports.once = function once(fun) {
   var called = false;
   return exports.getArguments(function (args) {
     if (called) {
-      console.trace();
+      if ('console' in global && 'trace' in console) {
+        console.trace();
+      }
       throw new Error('once called  more than once');
     } else {
       called = true;
@@ -1032,7 +1034,8 @@ exports.readAsArrayBuffer = binUtil.readAsArrayBuffer;
 exports.readAsBinaryString = binUtil.readAsBinaryString;
 exports.binaryStringToArrayBuffer = binUtil.binaryStringToArrayBuffer;
 exports.arrayBufferToBinaryString = binUtil.arrayBufferToBinaryString;
-}).call(this,_dereq_(19))
+
+}).call(this,_dereq_(19),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"13":13,"15":15,"16":16,"19":19,"6":6}],8:[function(_dereq_,module,exports){
 "use strict";
 
