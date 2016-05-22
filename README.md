@@ -12,6 +12,18 @@ Basically, worker-pouch allows you use the PouchDB API like you normally would, 
 
 The worker-pouch adapter passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/worker-pouch). It requires PouchDB 5.0.0+.
 
+**Topics:**
+
+* [Install](#install)
+* [Usage](#usage)
+* * [Easy Mode](#easy-mode)
+* * [Custom Mode](#custom-mode)
+* [Performance benefits of worker-pouch](#performance-benefits-of-worker-pouch)
+* [Fallback for unsupported browsers]((#fallback-for-unsupported-browsers))
+* [Debugging](#debugging)
+* [FAQs](#faqs)
+
+
 Install
 ---
 
@@ -63,7 +75,7 @@ because of a custom Browserify loader used by this project. The loader is at `wo
 
 Unfortunately, creating workers via Blob URLs is not supported in all browsers. In particular, IE, Edge, Safari, and iOS are not supported. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/). There is also an API to [detect browser support](#detecting-browser-support).
 
-In Easy Mode, you will need to use the [isSupportedBrowser()](#detecting-browser-support) API if you would like to support browsers other than Firefox and Chrome.
+In Easy Mode, you will need to use the [isSupportedBrowser()](#fallback-for-unsupported-browsers) API if you would like to support browsers other than Firefox and Chrome.
 
 ### Custom Mode
 
@@ -148,10 +160,10 @@ Basic takeaway: `put()`s avoid DOM-blocking (due to using many smaller transacti
 
 (Note that by "blocked the DOM," I mean froze the animated GIF for a significant amount of time - at least a half-second. A single dropped frame was not penalized. Try the test yourself, and you'll see the difference is pretty stark.)
 
-Detecting browser support
+Fallback for unsupported browsers
 ----
 
-In "easy mode," this plugin doesn't support all browsers. So it provides a special API to dianogose whether or not the current browser supports worker-pouch. Here's how you can use it:
+In Easy Mode, this plugin doesn't support all browsers. So it provides a special API to dianogose whether or not the current browser supports worker-pouch. Here's how you can use it:
 
 ```js
 var workerPouch = require('worker-pouch');
@@ -193,7 +205,7 @@ worker-pouch uses [debug](https://github.com/visionmedia/debug) for logging. So 
 PouchDB.debug.enable('pouchdb:worker:*');
 ```
 
-Q & A
+FAQs
 ---
 
 #### Wait, doesn't PouchDB already work in a Web Worker?
@@ -258,3 +270,13 @@ You can run e.g.
     CLIENT=selenium:phantomjs npm test
 
 This will run the tests automatically and the process will exit with a 0 or a 1 when it's done. Firefox uses IndexedDB, and PhantomJS uses WebSQL.
+
+### Running the custom-api tests
+
+Run:
+
+    npm run test-custom
+
+Or to debug:
+
+    npm run test-custom-local
