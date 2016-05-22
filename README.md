@@ -12,12 +12,12 @@ Basically, worker-pouch allows you use the PouchDB API like you normally would, 
 
 The worker-pouch adapter passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/worker-pouch). It requires PouchDB 5.0.0+.
 
-**Topics:**
+**Topics**
 
 * [Install](#install)
 * [Usage](#usage)
-* * [Easy Mode](#easy-mode)
-* * [Custom Mode](#custom-mode)
+  * [Easy Mode](#easy-mode)
+  * [Custom Mode](#custom-mode)
 * [Performance benefits of worker-pouch](#performance-benefits-of-worker-pouch)
 * [Fallback for unsupported browsers]((#fallback-for-unsupported-browsers))
 * [Debugging](#debugging)
