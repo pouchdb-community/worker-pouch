@@ -26,6 +26,8 @@
     "describe",
     "beforeEach",
     "afterEach",
+    "before",
+    "after",
     "it",
     "emit"
   ]

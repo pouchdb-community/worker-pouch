@@ -2,24 +2,37 @@ worker-pouch [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg
 =====
 
 ```js
-// This pouch is powered by web workers!
+// This pouch is powered by Workers!
 var db = new PouchDB('mydb', {adapter: 'worker'});
 ```
 
-Adapter plugin to use PouchDB over [web workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker). Transparently proxies all PouchDB API requests to a web worker, so that the most expensive database operations are run in a separate thread. Supports Firefox and Chrome.
+Adapter plugin to use PouchDB over [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker) or [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). Transparently proxies all PouchDB API requests to the Worker, so that the most expensive database operations are run in a separate thread.
 
-Basically, worker-pouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker. You don't even need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+Basically, worker-pouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker.
 
 The worker-pouch adapter passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/worker-pouch). It requires PouchDB 5.0.0+.
 
-IE, Edge, Safari, and iOS are not supported due to browser bugs. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/). There is also an API to [detect browser support](#detecting-browser-support).
+Install
+---
+
+    $ npm install worker-pouch
 
 Usage
 ---
 
-    $ npm install worker-pouch
-    
-When you `npm install worker-pouch`, the client JS file is available at `node_modules/worker-pouch/dist/pouchdb.worker-pouch.js`. Or you can just download it from Github above (in which case, it will be available as `window.workerPouch`).
+This plugin has two modes:
+* [Easy Mode](#easy-mode), supporting Chrome and Firefox, with a fallback for other browsers, and
+* [Custom Mode](#custom-mode), potentially supporting more browsers, and allowing you to use your own Web Worker or Service Worker.
+
+In Easy Mode, you don't need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob). Whereas in Custom Mode, you must manage the Web Worker or Service Worker yourself.
+
+### Easy Mode
+
+You can do Easy Mode either with prebuilt JavaScript or via Browserify/Webpack.
+
+#### Setup via prebuilt JavaScript
+
+The client JS file is available at `node_modules/worker-pouch/dist/pouchdb.worker-pouch.js`. Or you can just download it from Github above (in which case, it will be available as `window.workerPouch`).
 
 Then include it in your HTML, after PouchDB:
 
@@ -34,7 +47,7 @@ Then you can create a worker-powered PouchDB using:
 var db = new PouchDB('mydb', {adapter: 'worker'});
 ```
 
-##### In Browserify
+#### Setup via Browserify/Webpack/etc.
 
 The same rules apply, but you have to notify PouchDB of the new adapter:
 
@@ -43,7 +56,77 @@ var PouchDB = require('pouchdb');
 PouchDB.adapter('worker', require('worker-pouch'));
 ```
 
-Performance benefits
+(For Webpack, you will need [ify-loader](https://github.com/hughsk/ify-loader) or [transform-loader](https://github.com/webpack/transform-loader)
+because of a custom Browserify loader used by this project. The loader is at `worker-pouch/lib/workerify`.)
+
+#### Detecting browser support
+
+Unfortunately, creating workers via Blob URLs is not supported in all browsers. In particular, IE, Edge, Safari, and iOS are not supported. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/). There is also an API to [detect browser support](#detecting-browser-support).
+
+In Easy Mode, you will need to use the [isSupportedBrowser()](#detecting-browser-support) API if you would like to support browsers other than Firefox and Chrome.
+
+### Custom Mode
+
+In this mode, you manage the Web Worker or Service Worker yourself, and you register the two endpoints so that worker-pouch can communicate with the "backend" and "frontend."
+
+Since this doesn't require Blob URLs, and because you can use custom PouchDB objects, you can potentially support more browsers this way. It's much more flexible.
+
+This mode only supports bundling via Browserify/Webpack/etc. There is no prebuilt option.
+
+To use, you'll need this code on the client side:
+
+```js
+// client-side code
+var PouchDB = require('pouchdb');
+PouchDB.adapter('worker', require('worker-pouch/client'));
+
+var worker = new Worker('worker.js'); // or Service Worker
+
+var db = new PouchDB('mydb', {
+  adapter: 'worker',
+  worker: function () { return worker; }
+});
+```
+
+Note that you create the `PouchDB` object passing in both `adapter: 'worker'`
+and `worker`, which points to a function that returns the worker.
+(Once [this PouchDB bug](https://github.com/pouchdb/pouchdb/issues/5200) is resolved, you'll be able to directly pass in the `worker` object instead.)
+
+Then you include this code on the worker side:
+
+```js
+// worker-side code
+var registerWorkerPouch = require('worker-pouch/worker');
+var PouchDB = require('pouchdb');
+
+// attach to global `self` object
+registerWorkerPouch(self, PouchDB);
+```
+
+If you would like to customize how `PouchDB` is created inside of the worker, then you can also pass in a custom PouchDB factory function, which is a function that takes an options object (e.g. `{name: 'mydb', auto_compaction: true}`)
+and returns a `PouchDB` object.
+
+This is useful in cases where PouchDB's IndexedDB adapter doesn't work inside of a worker ([such as Safari](https://bugs.webkit.org/show_bug.cgi?id=149953)), so for instance you can have the `pouchCreator` function
+return an in-memory `PouchDB` object.
+
+Here's an example:
+
+```js
+var PouchDB = require('pouchdb');
+require('pouchdb/extras/memory');
+function pouchCreator(opts) {
+  opts.adapter = 'memory'; // force in-memory mode
+  return new PouchDB(opts);
+}
+
+var registerWorkerPouch = require('worker-pouch/worker');
+registerWorkerPouch(self, pouchCreator);
+
+```
+
+The PouchDB worker code will listen for messages from the client side, but should ignore any non-worker-pouch messages, so you are free to still use `worker.postMessage()` as desired.
+
+Performance benefits of worker-pouch
 ----
 
 These numbers were recorded using [this site](http://nolanlawson.github.io/database-comparison-worker-pouch/). The test involved inserting 10000 PouchDB documents, and was run on a 2013 MacBook Air. Browser data was deleted between each test.
@@ -68,7 +151,7 @@ Basic takeaway: `put()`s avoid DOM-blocking (due to using many smaller transacti
 Detecting browser support
 ----
 
-This plugin doesn't support all browsers. So it provides a special API to dianogose whether or not the current browser supports worker-pouch. Here's how you can use it:
+In "easy mode," this plugin doesn't support all browsers. So it provides a special API to dianogose whether or not the current browser supports worker-pouch. Here's how you can use it:
 
 ```js
 var workerPouch = require('worker-pouch');
@@ -113,13 +196,13 @@ PouchDB.debug.enable('pouchdb:worker:*');
 Q & A
 ---
 
-#### Wait, doesn't PouchDB already work in a web worker?
+#### Wait, doesn't PouchDB already work in a Web Worker?
 
-Yes, you can use pure PouchDB inside of a web worker. But the point of this plugin is to let you use PouchDB from *outside a web worker*, and then have it transparently proxy to another PouchDB that is isolated in a web worker.
+Yes, you can use pure PouchDB inside of a Web Worker. But the point of this plugin is to let you use PouchDB from *outside a Web Worker*, and then have it transparently proxy to another PouchDB that is isolated in a Web Worker.
 
 #### What browsers are supported?
 
-Only those browsers that 1) allow blob URLs for web worker scripts, and 2) allow IndexedDB inside of a web worker. Today, that means Chrome and Firefox.
+Only those browsers that 1) allow blob URLs for Web Worker scripts, and 2) allow IndexedDB inside of a Web Worker. Today, that means Chrome and Firefox.
 
 #### Can I use it with other plugins?
 
