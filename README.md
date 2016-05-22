@@ -19,7 +19,7 @@ The worker-pouch adapter passes [the full PouchDB test suite](https://travis-ci.
   * [Easy Mode](#easy-mode)
   * [Custom Mode](#custom-mode)
 * [Performance benefits of worker-pouch](#performance-benefits-of-worker-pouch)
-* [Fallback for unsupported browsers]((#fallback-for-unsupported-browsers))
+* [Fallback for unsupported browsers](#fallback-for-unsupported-browsers)
 * [Debugging](#debugging)
 * [FAQs](#faqs)
 
