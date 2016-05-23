@@ -6,7 +6,7 @@ worker-pouch [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg
 var db = new PouchDB('mydb', {adapter: 'worker'});
 ```
 
-Adapter plugin to use PouchDB over [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker) or [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). Transparently proxies all PouchDB API requests to the Worker, so that the most expensive database operations are run in a separate thread.
+Adapter plugin to use PouchDB over [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker) or [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). Transparently proxies all PouchDB API requests to the worker, so that the most expensive database operations are run in a separate thread.
 
 Basically, worker-pouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker.
 
