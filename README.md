@@ -71,9 +71,7 @@ PouchDB.adapter('worker', require('worker-pouch'));
 
 #### Detecting browser support
 
-Unfortunately, creating workers via Blob URLs is not supported in all browsers. In particular, IE, Edge, Safari, and iOS are not supported. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/). There is also an API to [detect browser support](#detecting-browser-support).
-
-In Easy Mode, you will need to use the [isSupportedBrowser()](#fallback-for-unsupported-browsers) API if you would like to support browsers other than Firefox and Chrome.
+Unfortunately, creating workers via Blob URLs is not supported in all browsers. In particular, IE, Edge, Safari, and iOS are not supported. Luckily, Firefox and Chrome are the browsers that [benefit the most from web workers](http://nolanlawson.com/2015/09/29/indexeddb-websql-localstorage-what-blocks-the-dom/). There is also an API to [detect browser support](#fallback-for-unsupported-browsers), which you must use if you would like to support browsers other than Firefox and Chrome.
 
 ### Custom Mode
 
