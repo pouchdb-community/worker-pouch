@@ -22,6 +22,7 @@ The worker-pouch adapter passes [the full PouchDB test suite](https://travis-ci.
 * [Fallback for unsupported browsers](#fallback-for-unsupported-browsers)
 * [Debugging](#debugging)
 * [FAQs](#faqs)
+* [Changelog](#changelog)
 
 
 Install
@@ -241,6 +242,14 @@ local.replicate.to(remote);
 The reason is that when you create a remote PouchDB using `new PouchDB('http://example.com/db')`, then that runs inside the UI thread. However, when you `.replicate.to('http://example.com/db')`, then that string is passed ver-batim to the worker thread, where `worker-pouch` becomes responsible for creating the remote PouchDB. Hence replication will occur inside of the worker thread.
 
 In general, if you are very concerned about performance implications of what runs inside of the woker vs what runs outside of the worker, you are encouraged to _not_ use `worker-pouch` and to instead just run PouchDB inside a worker and handle message-passing yourself (might I recommend [promise-worker](https://github.com/nolanlawson/promise-worker)?). This is the only way to really ensure that _all_ PouchDB operations are isolated to the worker.
+
+Changelog
+-----
+
+- 1.1.0
+  - Adds the Custom Mode API
+- 1.0.0
+  - Initial release
 
 Building
 ----
