@@ -55,7 +55,7 @@ function tests(suiteName, dbName, dbType, viewType) {
     }
 
     beforeEach(function () {
-      Promise = PouchDB.utils.Promise;
+      Promise = Promise;
       return new PouchDB(dbName).destroy();
     });
     afterEach(function () {
