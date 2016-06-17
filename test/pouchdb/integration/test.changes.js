@@ -608,7 +608,7 @@ adapters.forEach(function (adapter) {
       // fixes code coverage by ensuring the changes() listener
       // emits 'complete' even if the db's task queue isn't
       // ready yet
-      return new PouchDB.utils.Promise(function (resolve, reject) {
+      return new Promise(function (resolve, reject) {
         var db = new PouchDB(dbs.name);
         var changes = db.changes({live: true});
         changes.on('error', reject);
@@ -618,7 +618,7 @@ adapters.forEach(function (adapter) {
     });
 
     it('Changes with invalid ddoc view name', function () {
-      return new PouchDB.utils.Promise(function (resolve, reject) {
+      return new Promise(function (resolve, reject) {
         var db = new PouchDB(dbs.name);
         db.post({});
         var changes = db.changes({live: true, filter: '_view', view: ''});
@@ -628,7 +628,7 @@ adapters.forEach(function (adapter) {
     });
 
     it('Changes with invalid ddoc view name 2', function () {
-      return new PouchDB.utils.Promise(function (resolve, reject) {
+      return new Promise(function (resolve, reject) {
         var db = new PouchDB(dbs.name);
         db.post({});
         var changes = db.changes({live: true, filter: '_view', view: 'a/b/c'});
@@ -648,7 +648,7 @@ adapters.forEach(function (adapter) {
         // CouchDB 2.X does not allow saving of invalid design docs,
         // so this test is not valid
         if (testUtils.isCouchMaster()) {
-          return PouchDB.utils.Promise.resolve();
+          return Promise.resolve();
         }
 
         var db = new PouchDB(dbs.name);
@@ -660,7 +660,7 @@ adapters.forEach(function (adapter) {
             }
           }
         }).then(function () {
-          return new PouchDB.utils.Promise(function (resolve, reject) {
+          return new Promise(function (resolve, reject) {
             var changes = db.changes({
               live: true,
               filter: '_view',
@@ -677,7 +677,7 @@ adapters.forEach(function (adapter) {
       // CouchDB 2.X does not allow saving of invalid design docs,
       // so this test is not valid
       if (testUtils.isCouchMaster()) {
-        return PouchDB.utils.Promise.resolve();
+        return Promise.resolve();
       }
 
       var db = new PouchDB(dbs.name);
@@ -689,7 +689,7 @@ adapters.forEach(function (adapter) {
           }
         }
       }).then(function () {
-        return new PouchDB.utils.Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
           var changes = db.changes({
             live: true,
             filter: 'name/name'
@@ -1014,7 +1014,7 @@ adapters.forEach(function (adapter) {
 
     it("#3579 changes firing 1 too many times", function () {
       var db = new PouchDB(dbs.name);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = Promise;
       return db.bulkDocs([{}, {}, {}]).then(function () {
         var changes = db.changes({
           since: 'now',
@@ -1057,7 +1057,7 @@ adapters.forEach(function (adapter) {
 
       var db = new PouchDB(dbs.name);
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
 
       var docIds = ['b', 'c', 'a', 'z', 'd', 'e'];
 
@@ -1110,7 +1110,7 @@ adapters.forEach(function (adapter) {
 
       var db = new PouchDB(dbs.name);
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
 
       var docIds = ['b', 'c', 'a', 'z', 'd', 'e'];
 
@@ -1187,7 +1187,7 @@ adapters.forEach(function (adapter) {
         }
       ];
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
       var seqs = [];
 
       docs.forEach(function (doc) {
@@ -1361,7 +1361,7 @@ adapters.forEach(function (adapter) {
         ]
       ];
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
       var seqs = [0];
 
       function getExpected(i) {
@@ -1484,7 +1484,7 @@ adapters.forEach(function (adapter) {
         ]
       ];
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
       var seqs = [0];
 
       function getExpected(i) {
@@ -1605,7 +1605,7 @@ adapters.forEach(function (adapter) {
         ]
       ];
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
       var seqs = [0];
 
       tree.forEach(function (docs, i) {
@@ -1645,7 +1645,7 @@ adapters.forEach(function (adapter) {
           {"results": [], "last_seq": seqs[3]}
         ];
 
-        var chain2 = PouchDB.utils.Promise.resolve();
+        var chain2 = Promise.resolve();
 
         function normalizeResult(result) {
           // order of changes doesn't matter
@@ -1710,7 +1710,7 @@ adapters.forEach(function (adapter) {
         ]
       ];
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
       var seqs = [0];
 
       tree.forEach(function (docs, i) {
@@ -1764,7 +1764,7 @@ adapters.forEach(function (adapter) {
           {"results": [], "last_seq": seqs[4]}
         ];
 
-        var chain2 = PouchDB.utils.Promise.resolve();
+        var chain2 = Promise.resolve();
 
         function normalizeResult(result) {
           // order of changes doesn't matter
@@ -1972,7 +1972,7 @@ adapters.forEach(function (adapter) {
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs(docs).then(function () {
-        return new PouchDB.utils.Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
           var retChanges = [];
           var changes = db.changes({
             doc_ids: ['1', '3'],
@@ -2006,7 +2006,7 @@ adapters.forEach(function (adapter) {
       }
       var db = new PouchDB(dbs.name);
       return db.bulkDocs(docs).then(function () {
-        return new PouchDB.utils.Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
           var retChanges = [];
           var changes = db.changes({
             doc_ids: [docs[1]._id, docs[3]._id],

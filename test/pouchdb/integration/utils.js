@@ -134,7 +134,7 @@ testUtils.readBlob = function (blob, callback) {
 };
 
 testUtils.readBlobPromise = function (blob) {
-  return new PouchDB.utils.Promise(function (resolve) {
+  return new Promise(function (resolve) {
     testUtils.readBlob(blob, resolve);
   });
 };
@@ -293,7 +293,7 @@ testUtils.promisify = function (fun, context) {
     for (var i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-    return new PouchDB.utils.Promise(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
       args.push(function (err, res) {
         if (err) {
           return reject(err);

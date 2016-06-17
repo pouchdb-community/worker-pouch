@@ -44,7 +44,7 @@ adapters.forEach(function (adapter) {
         tasks.push(i);
       }
 
-      return PouchDB.utils.Promise.all(tasks.map(function (i) {
+      return Promise.all(tasks.map(function (i) {
         var doc = {_id: 'doc_' + i};
         return db.put(doc).then(function () {
           return db.compact();
@@ -267,11 +267,11 @@ adapters.forEach(function (adapter) {
         open_revs: 'all'
       }).then(function (docs) {
         var combinedResult = [];
-        return PouchDB.utils.Promise.all(docs.map(function (doc) {
+        return Promise.all(docs.map(function (doc) {
           doc = doc.ok;
           // convert revision IDs into full _rev hashes
           var start = doc._revisions.start;
-          return PouchDB.utils.Promise.all(
+          return Promise.all(
             doc._revisions.ids.map(function (id, i) {
               var rev = (start - i) + '-' + id;
               return db.get(docId, {rev: rev}).then(function (doc) {
@@ -455,7 +455,7 @@ adapters.forEach(function (adapter) {
           });
         });
         queue.then(function () {
-          var promise = PouchDB.utils.Promise.all([
+          var promise = Promise.all([
             db.compact(),
             db.compact(),
             db.compact(),
@@ -467,7 +467,7 @@ adapters.forEach(function (adapter) {
         });
       }
       return queue.then(function () {
-        return PouchDB.utils.Promise.all(otherPromises);
+        return Promise.all(otherPromises);
       });
     });
 
@@ -476,7 +476,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var queue = db.put({_id: 'doc'});
 
-      var compactQueue = PouchDB.utils.Promise.resolve();
+      var compactQueue = Promise.resolve();
 
       for (var i = 0; i < 50; i++) {
         /* jshint loopfunc:true */
@@ -492,7 +492,7 @@ adapters.forEach(function (adapter) {
         });
         queue.then(function () {
           compactQueue = compactQueue.then(function () {
-            return PouchDB.utils.Promise.all([
+            return Promise.all([
               db.compact(),
               db.compact(),
               db.compact(),
@@ -585,7 +585,7 @@ adapters.forEach(function (adapter) {
         md1.should.equal(md2,
           'md5 sums should collide. if not, other #2818 tests will fail');
       }).then(function () {
-        return PouchDB.utils.Promise.all(['doc1', 'doc2'].map(function (id) {
+        return Promise.all(['doc1', 'doc2'].map(function (id) {
           return db.get(id, {attachments: true});
         })).then(function (docs) {
           var data1 = docs[0]._attachments['att.txt'].data;
@@ -620,7 +620,7 @@ adapters.forEach(function (adapter) {
         return db.put(doc1);
       }).then(function (res) {
         rev2 = res.rev;
-        return PouchDB.utils.Promise.all([rev1, rev2].map(function (rev) {
+        return Promise.all([rev1, rev2].map(function (rev) {
           return db.get('doc1', {rev: rev, attachments: true});
         }));
       }).then(function (docs) {
@@ -759,7 +759,7 @@ adapters.forEach(function (adapter) {
         docs: docs,
         new_edits: false
       }).then(function () {
-        return PouchDB.utils.Promise.all([
+        return Promise.all([
           '1-a1', '2-a2', '3-a3', '1-b1'
         ].map(function (rev) {
           return db.get('fubar', {rev: rev, attachments: true});
@@ -773,7 +773,7 @@ adapters.forEach(function (adapter) {
         allDigests = allDigests.concat(digestsToForget).concat(
           digestsToRemember);
 
-        return PouchDB.utils.Promise.all(allDigests.map(function (digest) {
+        return Promise.all(allDigests.map(function (digest) {
           var doc = {
             _attachments: {
               'newatt.txt': {
@@ -790,7 +790,7 @@ adapters.forEach(function (adapter) {
       }).then(function () {
         return db.compact();
       }).then(function () {
-        return PouchDB.utils.Promise.all(digestsToForget.map(
+        return Promise.all(digestsToForget.map(
             function (digest) {
           var doc = {
             _attachments: {
@@ -808,7 +808,7 @@ adapters.forEach(function (adapter) {
           });
         }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(digestsToRemember.map(
+        return Promise.all(digestsToRemember.map(
             function (digest) {
           var doc = {
             _attachments: {
@@ -1122,7 +1122,7 @@ adapters.forEach(function (adapter) {
       }).then(function () {
         return db.compact();
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return Promise.all(
             digestsToRemember.map(function (digest) {
           return db.post({
             _attachments: {
@@ -1135,7 +1135,7 @@ adapters.forEach(function (adapter) {
           });
         }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return Promise.all(
             digestsToForget.map(function (digest) {
           return db.post({
             _attachments: {
@@ -1322,7 +1322,7 @@ adapters.forEach(function (adapter) {
       }).then(function () {
         return db.compact();
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return Promise.all(
           digestsToRemember.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1335,7 +1335,7 @@ adapters.forEach(function (adapter) {
             });
           }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return Promise.all(
           digestsToForget.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1451,7 +1451,7 @@ adapters.forEach(function (adapter) {
         doc._rev = res.rev;
       }).then(function () {
 
-        var updatePromise = PouchDB.utils.Promise.resolve();
+        var updatePromise = Promise.resolve();
 
         for (var i  = 0; i < 20; i++) {
           /* jshint loopfunc: true */
@@ -1468,7 +1468,7 @@ adapters.forEach(function (adapter) {
           var task = db.get('foo');
           for (var j =0; j < 10; j++) {
             task = task.then(function () {
-              return new PouchDB.utils.Promise(function (resolve) {
+              return new Promise(function (resolve) {
                 setTimeout(resolve, Math.floor(Math.random() * 10));
               });
             }).then(function () {
@@ -1477,7 +1477,7 @@ adapters.forEach(function (adapter) {
           }
           tasks.push(task);
         }
-        return PouchDB.utils.Promise.all(tasks);
+        return Promise.all(tasks);
       });
     });
 
@@ -1490,7 +1490,7 @@ adapters.forEach(function (adapter) {
         doc._rev = res.rev;
       }).then(function () {
 
-        var updatePromise = PouchDB.utils.Promise.resolve();
+        var updatePromise = Promise.resolve();
 
         for (var i  = 0; i < 20; i++) {
           /* jshint loopfunc: true */
@@ -1507,7 +1507,7 @@ adapters.forEach(function (adapter) {
           var task = db.allDocs({key: 'foo', include_docs: true});
           for (var j =0; j < 10; j++) {
             task = task.then(function () {
-              return new PouchDB.utils.Promise(function (resolve) {
+              return new Promise(function (resolve) {
                 setTimeout(resolve, Math.floor(Math.random() * 10));
               });
             }).then(function () {
@@ -1516,7 +1516,7 @@ adapters.forEach(function (adapter) {
           }
           tasks.push(task);
         }
-        return PouchDB.utils.Promise.all(tasks);
+        return Promise.all(tasks);
       });
     });
 
@@ -1533,7 +1533,7 @@ adapters.forEach(function (adapter) {
         doc._rev = res.rev;
       }).then(function () {
 
-        var updatePromise = PouchDB.utils.Promise.resolve();
+        var updatePromise = Promise.resolve();
 
         for (var i  = 0; i < 20; i++) {
           /* jshint loopfunc: true */
@@ -1550,7 +1550,7 @@ adapters.forEach(function (adapter) {
           var task = db.changes({include_docs: true});
           for (var j =0; j < 10; j++) {
             task = task.then(function () {
-              return new PouchDB.utils.Promise(function (resolve) {
+              return new Promise(function (resolve) {
                 setTimeout(resolve, Math.floor(Math.random() * 10));
               });
             }).then(function () {
@@ -1559,7 +1559,7 @@ adapters.forEach(function (adapter) {
           }
           tasks.push(task);
         }
-        return PouchDB.utils.Promise.all(tasks);
+        return Promise.all(tasks);
       });
     });
 
@@ -1662,7 +1662,7 @@ adapters.forEach(function (adapter) {
       }).then(function (doc2) {
         return db.remove(doc2);
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return Promise.all(
           digestsToRemember.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1675,7 +1675,7 @@ adapters.forEach(function (adapter) {
             });
           }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return Promise.all(
           digestsToForget.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1796,7 +1796,7 @@ adapters.forEach(function (adapter) {
         });
         return db.bulkDocs(docs);
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return Promise.all(
           digestsToRemember.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1809,7 +1809,7 @@ adapters.forEach(function (adapter) {
             });
           }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return Promise.all(
           digestsToForget.map(function (digest) {
             return db.post({
               _attachments: {

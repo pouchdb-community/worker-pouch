@@ -656,7 +656,7 @@ adapters.forEach(function (adapters) {
       var doc = {_id: 'foo'};
       var firstRev;
 
-      var chain = PouchDB.utils.Promise.resolve().then(function () {
+      var chain = Promise.resolve().then(function () {
         return db.put(doc).then(function (info) {
           firstRev = info.rev;
         });
@@ -711,7 +711,7 @@ adapters.forEach(function (adapters) {
       var doc = {_id: 'foo'};
       var firstRev;
 
-      var chain = PouchDB.utils.Promise.resolve().then(function () {
+      var chain = Promise.resolve().then(function () {
         return db.put(doc).then(function (info) {
           firstRev = info.rev;
         });
@@ -792,7 +792,7 @@ adapters.forEach(function (adapters) {
         ]
       ];
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
       tree.forEach(function (docs) {
         chain = chain.then(function () {
           var revs1;
@@ -862,7 +862,7 @@ adapters.forEach(function (adapters) {
         ]
       ];
 
-      var chain = PouchDB.utils.Promise.resolve();
+      var chain = Promise.resolve();
       tree.forEach(function (docs) {
         chain = chain.then(function () {
           var changes1;
@@ -1049,7 +1049,7 @@ adapters.forEach(function (adapters) {
         if (typeof arguments[arguments.length - 1] === 'function') {
           arguments[arguments.length - 1](err);
         } else {
-          return PouchDB.utils.Promise.reject(err);
+          return Promise.reject(err);
         }
       };
       var doc = {_id: '3', count: 0};
@@ -1739,7 +1739,7 @@ adapters.forEach(function (adapters) {
     });
 
     function waitForChange(db, fun) {
-      return new PouchDB.utils.Promise(function (resolve) {
+      return new Promise(function (resolve) {
         var remoteChanges = db.changes({live: true, include_docs: true});
         remoteChanges.on('change', function (change) {
           if (fun(change)) {
@@ -1754,7 +1754,7 @@ adapters.forEach(function (adapters) {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = Promise;
 
       // id() is the first thing called
       var origId = remote.id;
@@ -2463,7 +2463,7 @@ adapters.forEach(function (adapters) {
         }
 
         if (failWrite && checkpointCount > 1) {
-          return PouchDB.utils.Promise.reject({
+          return Promise.reject({
             status: 0,
             message: 'Database encountered an unknown error'
           });
@@ -2501,7 +2501,7 @@ adapters.forEach(function (adapters) {
         // Verify that checkpoints are indeed mismatching:
         should.exist(checkpoint);
         var target = new PouchDB(dbs.name);
-        return PouchDB.utils.Promise.all([
+        return Promise.all([
           target.get(checkpoint),
           source.get(checkpoint)
         ]);
@@ -2577,7 +2577,7 @@ adapters.forEach(function (adapters) {
         // Verify that checkpoints are indeed mismatching:
         should.exist(checkpoint);
         var target = new PouchDB(dbs.name);
-        return PouchDB.utils.Promise.all([
+        return Promise.all([
           target.get(checkpoint),
           source.get(checkpoint)
         ]);
@@ -2660,7 +2660,7 @@ adapters.forEach(function (adapters) {
         // Verify that checkpoints are indeed mismatching:
         should.exist(checkpoint);
         var target = new PouchDB(dbs.name);
-        return PouchDB.utils.Promise.all([
+        return Promise.all([
           target.get(checkpoint),
           source.get(checkpoint)
         ]);
@@ -2741,7 +2741,7 @@ adapters.forEach(function (adapters) {
          // Verify that we have old checkpoints:
          should.exist(checkpoint);
          var target = new PouchDB(dbs.name);
-         return PouchDB.utils.Promise.all([
+         return Promise.all([
            target.get(checkpoint),
            source.get(checkpoint)
          ]);
@@ -2823,7 +2823,7 @@ adapters.forEach(function (adapters) {
         var bulkDocs = remote.bulkDocs;
         var bulkDocsCallCount = 0;
         remote.bulkDocs = function (content, opts, callback) {
-          return new PouchDB.utils.Promise(function (fulfill, reject) {
+          return new Promise(function (fulfill, reject) {
             if (typeof callback !== 'function') {
               callback = function (err, resp) {
                 if (err) {
@@ -2896,7 +2896,7 @@ adapters.forEach(function (adapters) {
         var bulkDocs = remote.bulkDocs;
         remote.bulkDocs = function (docs, opts, callback) {
           if (typeof callback !== 'function') {
-            return PouchDB.utils.Promise.reject(new Error());
+            return Promise.reject(new Error());
           }
           callback(new Error());
         };
@@ -3198,7 +3198,7 @@ adapters.forEach(function (adapters) {
           if (typeof arguments[arguments.length - 1] === 'function') {
             arguments[arguments.length - 1](err);
           } else {
-            return PouchDB.utils.Promise.reject(err);
+            return Promise.reject(err);
           }
         };
         return src.replicate.to(target);
@@ -3752,7 +3752,7 @@ adapters.forEach(function (adapters) {
     it('#3606 - live replication with filtered ddoc', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = Promise;
 
       return remote.bulkDocs([{
           _id: '_design/myddoc',
@@ -3786,7 +3786,7 @@ adapters.forEach(function (adapters) {
     it('#3606 - live repl with filtered ddoc+query_params', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = Promise;
 
       return remote.bulkDocs([{
           _id: '_design/myddoc',
@@ -3821,7 +3821,7 @@ adapters.forEach(function (adapters) {
     it('#3606 - live repl with doc_ids', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = Promise;
 
       return remote.bulkDocs([{
         _id: '_design/myddoc',
@@ -3855,7 +3855,7 @@ adapters.forEach(function (adapters) {
     it('#3606 - live repl with view', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = Promise;
 
       return remote.bulkDocs([{
         _id: '_design/myddoc',
@@ -3894,7 +3894,7 @@ adapters.forEach(function (adapters) {
     it('#3569 - 409 during replication', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = Promise;
 
       // we know we're easily going to go over that limit
       // because of all the parallel replications we're doing
