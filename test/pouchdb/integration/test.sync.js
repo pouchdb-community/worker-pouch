@@ -64,7 +64,7 @@ adapters.forEach(function (adapters) {
 
       // intentionally throw an error during replication
       remote.allDocs = function (opts) {
-        return Promise.reject(new Error('flunking you'));
+        return PouchDB.utils.Promise.reject(new Error('flunking you'));
       };
 
       return db.put(doc1).then(function () {
@@ -93,7 +93,7 @@ adapters.forEach(function (adapters) {
 
       // intentionally throw an error during replication
       remote.allDocs = function (opts) {
-        return Promise.reject(new Error('flunking you'));
+        return PouchDB.utils.Promise.reject(new Error('flunking you'));
       };
 
       var landedInCatch = false;
@@ -126,13 +126,13 @@ adapters.forEach(function (adapters) {
 
       // intentionally throw an error during replication
       remote.allDocs = function (opts) {
-        return Promise.reject(new Error('flunking you'));
+        return PouchDB.utils.Promise.reject(new Error('flunking you'));
       };
 
       return db.put(doc1).then(function () {
         return remote.put(doc2);
       }).then(function () {
-        return new Promise(function (resolve) {
+        return new PouchDB.utils.Promise(function (resolve) {
           db.sync(remote).on('error', resolve);
         });
       }).then(function (err) {
@@ -155,13 +155,13 @@ adapters.forEach(function (adapters) {
 
       // intentionally throw an error during replication
       remote.allDocs = function (opts) {
-        return Promise.reject(new Error('flunking you'));
+        return PouchDB.utils.Promise.reject(new Error('flunking you'));
       };
 
       return db.put(doc1).then(function () {
         return remote.put(doc2);
       }).then(function () {
-        return new Promise(function (resolve) {
+        return new PouchDB.utils.Promise(function (resolve) {
           db.sync(remote, function (err) {
             resolve(err);
           }).catch(function () {
@@ -189,7 +189,7 @@ adapters.forEach(function (adapters) {
       return db.put(doc1).then(function () {
         return remote.put(doc2);
       }).then(function () {
-        return new Promise(function (resolve, reject) {
+        return new PouchDB.utils.Promise(function (resolve, reject) {
           db.sync(remote, function (err, res) {
             if (err) {
               return reject(err);
@@ -357,7 +357,7 @@ adapters.forEach(function (adapters) {
       return db.put(doc1).then(function () {
         return remote.put(doc2);
       }).then(function () {
-        return new Promise(function (resolve, reject) {
+        return new PouchDB.utils.Promise(function (resolve, reject) {
           db.replicate.sync(remote).on('complete', resolve).on('error', reject);
         });
       }).then(function () {
@@ -378,11 +378,11 @@ adapters.forEach(function (adapters) {
       db.setMaxListeners(100);
       remote.setMaxListeners(100);
 
-      var promise = Promise.resolve();
+      var promise = PouchDB.utils.Promise.resolve();
 
       function syncThenCancel() {
         promise = promise.then(function () {
-          return new Promise(function (resolve, reject) {
+          return new PouchDB.utils.Promise(function (resolve, reject) {
             db = new PouchDB(dbs.name);
             remote = new PouchDB(dbs.remote);
             var sync = db.sync(remote)
@@ -390,7 +390,7 @@ adapters.forEach(function (adapters) {
               .on('complete', resolve);
             sync.cancel();
           }).then(function () {
-            return Promise.all([
+            return PouchDB.utils.Promise.all([
               db.destroy(),
               remote.destroy()
             ]);

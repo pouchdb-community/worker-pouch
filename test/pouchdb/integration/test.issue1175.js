@@ -6,11 +6,11 @@ function MockDatabase(statusCodeToReturn, dataToReturn) {
     if (callback) {
       callback(123);
     } else {
-      return Promise.resolve(123);
+      return PouchDB.utils.Promise.resolve(123);
     }
   };
   this.get = function (id, callback) {
-    return new Promise(function (fulfill, reject) {
+    return new PouchDB.utils.Promise(function (fulfill, reject) {
       setTimeout(function () {
         if (statusCodeToReturn !== 200) {
           reject({ status: statusCodeToReturn });
@@ -24,12 +24,12 @@ function MockDatabase(statusCodeToReturn, dataToReturn) {
     if (opts.complete) {
       opts.complete(null, {results: []});
     }
-    var promise = Promise.resolve({results: []});
+    var promise = PouchDB.utils.Promise.resolve({results: []});
     promise.on = function () { return this; };
     return promise;
   };
   this.put = function () {
-    return Promise.resolve();
+    return PouchDB.utils.Promise.resolve();
   };
 }
 function getCallback(expectError, done) {

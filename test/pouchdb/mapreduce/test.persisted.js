@@ -46,7 +46,7 @@ function tests(suiteName, dbName, dbType) {
     }
 
     beforeEach(function () {
-      Promise = Promise;
+      Promise = PouchDB.utils.Promise;
       return new PouchDB(dbName).destroy();
     });
     afterEach(function () {
@@ -99,7 +99,7 @@ function tests(suiteName, dbName, dbType) {
         return db.viewCleanup();
       }).then(function () {
         var views = ['name', 'title'];
-        return Promise.all(views.map(function (view) {
+        return PouchDB.utils.Promise.all(views.map(function (view) {
           return db.query(view).then(function (res) {
             throw new Error('expected an error');
           }, function (err) {

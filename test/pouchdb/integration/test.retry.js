@@ -30,7 +30,7 @@ adapters.forEach(function (adapters) {
     it('retry stuff', function (done) {
       this.timeout(2000000);
       var remote = new PouchDB(dbs.remote);
-      var Promise = Promise;
+      var Promise = PouchDB.utils.Promise;
       var allDocs = remote.allDocs;
 
       // Reject attempting to write 'foo' 3 times, then let it succeed
@@ -152,7 +152,7 @@ adapters.forEach(function (adapters) {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = Promise;
+      var Promise = PouchDB.utils.Promise;
 
       var origGet = remote.get;
       var i = 0;
@@ -224,7 +224,7 @@ adapters.forEach(function (adapters) {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = Promise;
+      var Promise = PouchDB.utils.Promise;
 
       var origGet = remote.get;
       var i = 0;
@@ -307,7 +307,7 @@ adapters.forEach(function (adapters) {
 
         var db = new PouchDB(dbs.name);
         var remote = new PouchDB(dbs.remote);
-        var Promise = Promise;
+        var Promise = PouchDB.utils.Promise;
 
         var origGet = remote.get;
         var i = 0;
@@ -380,7 +380,7 @@ adapters.forEach(function (adapters) {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = Promise;
+      var Promise = PouchDB.utils.Promise;
 
       var origGet = remote.get;
       var i = 0;
@@ -452,7 +452,7 @@ adapters.forEach(function (adapters) {
       this.timeout(200000);
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = Promise;
+      var Promise = PouchDB.utils.Promise;
 
       var flunked = 0;
       var origGet = remote.get;
