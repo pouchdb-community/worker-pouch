@@ -303,7 +303,7 @@ adapters.forEach(function (adapters) {
       'complete', 'error', 'paused', 'active',
       'change', 'cancel'
     ].forEach(function (event) {
-      it('returnValue doesn\'t leak "' + event + '" event', function () {
+      it.skip('returnValue doesn\'t leak "' + event + '" event', function () {
 
         var db = new PouchDB(dbs.name);
         var remote = new PouchDB(dbs.remote);
@@ -376,7 +376,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('returnValue doesn\'t leak "change" event w/ onChange', function () {
+    it.skip('returnValue doesn\'t leak "change" event w/ onChange', function () {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -541,7 +541,7 @@ adapters.forEach(function (adapters) {
     });
 
 
-    it('4049 retry while starting offline', function (done) {
+    it.skip('4049 retry while starting offline', function (done) {
 
       var ajax = PouchDB.utils.ajax;
       var _called = 0;

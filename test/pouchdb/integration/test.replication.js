@@ -4067,7 +4067,7 @@ adapters.forEach(function (adapters) {
     });
 
 
-    it('4094 cant fetch server uuid', function (done) {
+    it.skip('4094 cant fetch server uuid', function (done) {
 
       var ajax = PouchDB.utils.ajax;
 
@@ -4145,7 +4145,7 @@ adapters.forEach(function (adapters) {
       db.post({a: 'doc'});
     });
 
-    it('#4276 Triggers paused error', function (done) {
+    it.skip('#4276 Triggers paused error', function (done) {
 
       if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
         return done();
@@ -4181,7 +4181,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Heartbeat gets passed', function (done) {
+    it.skip('Heartbeat gets passed', function (done) {
 
       if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
         return done();
@@ -4208,7 +4208,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Timeout gets passed', function (done) {
+    it.skip('Timeout gets passed', function (done) {
 
       if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
         return done();

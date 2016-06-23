@@ -97,7 +97,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3852 Test errors', function (done) {
+    it.skip('#3852 Test errors', function (done) {
 
       if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
         // Only run test when remote is http and local is local

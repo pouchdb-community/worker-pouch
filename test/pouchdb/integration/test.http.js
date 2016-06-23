@@ -52,7 +52,7 @@ describe('test.http.js', function () {
     });
   });
 
-  it('Issue 1269 redundant _changes requests', function (done) {
+  it.skip('Issue 1269 redundant _changes requests', function (done) {
     var docs = [];
     var num = 100;
     for (var i = 0; i < num; i++) {
@@ -108,7 +108,7 @@ describe('test.http.js', function () {
     uri.host.should.equal('foo.com');
   });
 
-  it('Properly escape url params #4008', function() {
+  it.skip('Properly escape url params #4008', function() {
     var ajax = PouchDB.utils.ajax;
     PouchDB.utils.ajax = function(opts) {
       opts.url.should.not.contain('[');
@@ -120,7 +120,7 @@ describe('test.http.js', function () {
     });
   });
 
-  it('Allows the "ajax timeout" to extend "changes timeout"', function(done) {
+  it.skip('Allows the "ajax timeout" to extend "changes timeout"', function(done) {
     var timeout = 120000;
     var db = new PouchDB(dbs.name, {
       skipSetup: true,
