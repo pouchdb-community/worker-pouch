@@ -4,7 +4,7 @@ var chai = require('chai');
 require('chai-as-promised');
 var should = chai.should();
 
-var PouchDB = require('pouchdb');
+var PouchDB = require('pouchdb-browser');
 PouchDB.adapter('worker', require('../../client'));
 
 describe('custom api test suite', function () {

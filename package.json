@@ -67,6 +67,7 @@
     "pouchdb-browser": "^5.4.4",
     "pouchdb-http-proxy": "^0.10.4",
     "pouchdb-legacy-utils": "^1.0.0",
+    "pouchdb-memory": "^1.0.0",
     "request": "^2.36.0",
     "run-scripts": "^0.4.0",
     "sauce-connect-launcher": "^0.11.1",

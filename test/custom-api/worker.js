@@ -3,9 +3,8 @@
 /* jshint worker:true */
 
 var registerWorkerPouch = require('../../worker');
-var PouchDB = require('pouchdb');
 // using in-memory so it will work in PhantomJS
-require('pouchdb/extras/memory');
+var PouchDB = require('pouchdb-memory');
 var pouchCreator = function (opts) {
   opts.adapter = 'memory';
   return new PouchDB(opts);
