@@ -92,13 +92,12 @@ var worker = new Worker('worker.js');
 
 var db = new PouchDB('mydb', {
   adapter: 'worker',
-  worker: function () { return worker; }
+  worker: worker
 });
 ```
 
 Note that you create the `PouchDB` object passing in both `adapter: 'worker'`
-and `worker`, which points to a function that returns the worker.
-(Once [this PouchDB bug](https://github.com/pouchdb/pouchdb/issues/5200) is resolved, you'll be able to directly pass in the `worker` object instead.)
+and `worker`, which points to your `Worker` object.
 
 Then you include this code on the worker side:
 
