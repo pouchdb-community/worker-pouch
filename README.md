@@ -6,7 +6,7 @@ worker-pouch [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg
 var db = new PouchDB('mydb', {adapter: 'worker'});
 ```
 
-Adapter plugin to use PouchDB over [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker) or [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). Transparently proxies all PouchDB API requests to the worker, so that the most expensive database operations are run in a separate thread.
+Adapter plugin to use PouchDB over [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker). Transparently proxies all PouchDB API requests to the worker, so that the most expensive database operations are run in a separate thread.
 
 Basically, worker-pouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker.
 
@@ -35,9 +35,9 @@ Usage
 
 This plugin has two modes:
 * [Easy Mode](#easy-mode), supporting Chrome and Firefox, with a fallback for other browsers, and
-* [Custom Mode](#custom-mode), potentially supporting more browsers, and allowing you to use your own Web Worker or Service Worker.
+* [Custom Mode](#custom-mode), potentially supporting more browsers, and allowing you to use your own Web Worker.
 
-In Easy Mode, you don't need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob). Whereas in Custom Mode, you must manage the Web Worker or Service Worker yourself.
+In Easy Mode, you don't need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob). Whereas in Custom Mode, you must manage the Web Worker yourself.
 
 ### Easy Mode
 
@@ -75,7 +75,7 @@ Unfortunately, creating workers via Blob URLs is not supported in all browsers. 
 
 ### Custom Mode
 
-In this mode, you manage the Web Worker or Service Worker yourself, and you register the two endpoints so that worker-pouch can communicate with the "backend" and "frontend."
+In this mode, you manage the Web Worker yourself, and you register the two endpoints so that worker-pouch can communicate with the "backend" and "frontend."
 
 Since this doesn't require Blob URLs, and because you can use custom PouchDB objects, you can potentially support more browsers this way. It's much more flexible.
 
@@ -88,7 +88,7 @@ To use, you'll need this code on the client side:
 var PouchDB = require('pouchdb');
 PouchDB.adapter('worker', require('worker-pouch/client'));
 
-var worker = new Worker('worker.js'); // or Service Worker
+var worker = new Worker('worker.js');
 
 var db = new PouchDB('mydb', {
   adapter: 'worker',
