@@ -9,7 +9,7 @@ node_js:
 sudo: false
 
 addons:
-  firefox: "41.0.1"
+  firefox: "latest"
 
 script: npm run $COMMAND
 
@@ -23,13 +23,13 @@ before_script:
 env:
   matrix:
   # break into many small tests so travis doesn't complain
-  - CLIENT=selenium:firefox:41.0.1 SUITE=1 COMMAND=test
-  - CLIENT=selenium:firefox:41.0.1 SUITE=2 COMMAND=test
-  - CLIENT=selenium:firefox:41.0.1 SUITE=3 COMMAND=test
-  - CLIENT=selenium:firefox:41.0.1 SUITE=4 COMMAND=test
-  - CLIENT=selenium:firefox:41.0.1 SUITE=5 COMMAND=test
-  - CLIENT=selenium:firefox:41.0.1 SUITE=6 COMMAND=test
-  - CLIENT=selenium:firefox:41.0.1 SUITE=7 COMMAND=test
+  - CLIENT=selenium:firefox SUITE=1 COMMAND=test
+  - CLIENT=selenium:firefox SUITE=2 COMMAND=test
+  - CLIENT=selenium:firefox SUITE=3 COMMAND=test
+  - CLIENT=selenium:firefox SUITE=4 COMMAND=test
+  - CLIENT=selenium:firefox SUITE=5 COMMAND=test
+  - CLIENT=selenium:firefox SUITE=6 COMMAND=test
+  - CLIENT=selenium:firefox SUITE=7 COMMAND=test
   - COMMAND=test-custom
 
 branches:
