@@ -419,7 +419,8 @@ function tests(suiteName, dbName, dbType) {
     if (dbType === 'local' &&
         // can't test this in Node due to the vm
         (typeof process === 'undefined' || process.browser)) {
-      it('issue 4967 map() called twice', function () {
+      // this is not possible to test in worker-pouch, so we skip it
+      it.skip('issue 4967 map() called twice', function () {
         var db = new PouchDB(dbName);
         var globalObj = (typeof process !== 'undefined' && !process.browser) ?
           global : window;
