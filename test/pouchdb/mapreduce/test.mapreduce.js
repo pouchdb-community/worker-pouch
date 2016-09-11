@@ -126,7 +126,8 @@ function tests(suiteName, dbName, dbType, viewType) {
     });
 
     if (dbType === 'local' && viewType === 'temp') {
-      it("with a closure", function () {
+      // closures are not supported by worker-pouch
+      it.skip("with a closure", function () {
         var db = new PouchDB(dbName);
         return db.bulkDocs({docs: [
           {foo: 'bar'},
