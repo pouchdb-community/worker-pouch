@@ -44,7 +44,7 @@ adapters.forEach(function (adapter) {
         tasks.push(i);
       }
 
-      return PouchDB.utils.Promise.all(tasks.map(function (i) {
+      return testUtils.Promise.all(tasks.map(function (i) {
         var doc = {_id: 'doc_' + i};
         return db.put(doc).then(function () {
           return db.compact();
@@ -61,9 +61,9 @@ adapters.forEach(function (adapter) {
     it('Compaction document with no revisions to remove', function (done) {
       var db = new PouchDB(dbs.name);
       var doc = {_id: 'foo', value: 'bar'};
-      db.put(doc, function (err, res) {
+      db.put(doc, function () {
         db.compact(function () {
-          db.get('foo', function (err, doc) {
+          db.get('foo', function (err) {
             done(err);
           });
         });
@@ -97,12 +97,12 @@ adapters.forEach(function (adapter) {
         db.post(doc, function (err, res) {
           var rev2 = res.rev;
           db.compact(function () {
-            db.get('foo', { rev: rev1 }, function (err, doc) {
+            db.get('foo', { rev: rev1 }, function (err) {
               err.status.should.equal(404);
               err.name.should.equal(
                 'not_found', 'compacted document is missing'
               );
-              db.get('foo', { rev: rev2 }, function (err, doc) {
+              db.get('foo', { rev: rev2 }, function (err) {
                 done(err);
               });
             });
@@ -176,12 +176,11 @@ adapters.forEach(function (adapter) {
     ];
 
     it('Compact more complicated tree', function (done) {
-      new PouchDB(dbs.name, function (err, db) {
-        testUtils.putTree(db, exampleTree, function () {
-          db.compact(function () {
-            checkTree(db, exampleTree, function () {
-              done();
-            });
+      var db = new PouchDB(dbs.name);
+      testUtils.putTree(db, exampleTree, function () {
+        db.compact(function () {
+          checkTree(db, exampleTree, function () {
+            done();
           });
         });
       });
@@ -222,13 +221,13 @@ adapters.forEach(function (adapter) {
         db.remove({
           _id: 'foo',
           _rev: firstRev
-        }, function (err, res) {
+        }, function () {
           db.compact(function () {
-            db.get('foo', { rev: firstRev }, function (err, res) {
+            db.get('foo', { rev: firstRev }, function (err) {
               should.exist(err, 'got error');
-              err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
+              err.status.should.equal(testUtils.errors.MISSING_DOC.status,
                                       'correct error status returned');
-              err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
+              err.message.should.equal(testUtils.errors.MISSING_DOC.message,
                                    'correct error message returned');
               done();
             });
@@ -245,13 +244,13 @@ adapters.forEach(function (adapter) {
         db.remove({
           _id: id,
           _rev: firstRev
-        }, function (err, res) {
+        }, function () {
           db.compact(function () {
-            db.get(id, { rev: firstRev }, function (err, res) {
+            db.get(id, { rev: firstRev }, function (err) {
               should.exist(err, 'got error');
-              err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
+              err.status.should.equal(testUtils.errors.MISSING_DOC.status,
                                       'correct error status returned');
-              err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
+              err.message.should.equal(testUtils.errors.MISSING_DOC.message,
                                    'correct error message returned');
               done();
             });
@@ -267,11 +266,11 @@ adapters.forEach(function (adapter) {
         open_revs: 'all'
       }).then(function (docs) {
         var combinedResult = [];
-        return PouchDB.utils.Promise.all(docs.map(function (doc) {
+        return testUtils.Promise.all(docs.map(function (doc) {
           doc = doc.ok;
           // convert revision IDs into full _rev hashes
           var start = doc._revisions.start;
-          return PouchDB.utils.Promise.all(
+          return testUtils.Promise.all(
             doc._revisions.ids.map(function (id, i) {
               var rev = (start - i) + '-' + id;
               return db.get(docId, {rev: rev}).then(function (doc) {
@@ -448,14 +447,14 @@ adapters.forEach(function (adapter) {
           return db.get('doc').then(function (doc) {
             doc._attachments = doc._attachments || {};
             var blob = testUtils.makeBlob(
-              PouchDB.utils.btoa(Math.random().toString()),
+              testUtils.btoa(Math.random().toString()),
               'text/plain');
             return db.putAttachment(doc._id, 'att.txt', doc._rev, blob,
               'text/plain');
           });
         });
         queue.then(function () {
-          var promise = PouchDB.utils.Promise.all([
+          var promise = testUtils.Promise.all([
             db.compact(),
             db.compact(),
             db.compact(),
@@ -467,7 +466,7 @@ adapters.forEach(function (adapter) {
         });
       }
       return queue.then(function () {
-        return PouchDB.utils.Promise.all(otherPromises);
+        return testUtils.Promise.all(otherPromises);
       });
     });
 
@@ -476,7 +475,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var queue = db.put({_id: 'doc'});
 
-      var compactQueue = PouchDB.utils.Promise.resolve();
+      var compactQueue = testUtils.Promise.resolve();
 
       for (var i = 0; i < 50; i++) {
         /* jshint loopfunc:true */
@@ -484,7 +483,7 @@ adapters.forEach(function (adapter) {
           return db.get('doc').then(function (doc) {
             doc._attachments = doc._attachments || {};
             var blob = testUtils.makeBlob(
-              PouchDB.utils.btoa(Math.random().toString()),
+              testUtils.btoa(Math.random().toString()),
               'text/plain');
             return db.putAttachment(doc._id, 'att.txt', doc._rev, blob,
               'text/plain');
@@ -492,7 +491,7 @@ adapters.forEach(function (adapter) {
         });
         queue.then(function () {
           compactQueue = compactQueue.then(function () {
-            return PouchDB.utils.Promise.all([
+            return testUtils.Promise.all([
               db.compact(),
               db.compact(),
               db.compact(),
@@ -510,11 +509,13 @@ adapters.forEach(function (adapter) {
     //
     // NO MORE HTTP TESTS AFTER THIS POINT!
     //
-    // We're testing some very local-specific functionality
-    //
+    // We're testing some functionality specific to the implementation
+    // of pouch-adapter-(idb|websql|leveldb), skip the tests if
+    // HTTP or if using new adapters (NEXT=1).
 
 
-    if (autoCompactionAdapters.indexOf(adapter) === -1) {
+    if (autoCompactionAdapters.indexOf(adapter) === -1 ||
+        'NEXT' in testUtils.params()) {
       return;
     }
 
@@ -585,7 +586,7 @@ adapters.forEach(function (adapter) {
         md1.should.equal(md2,
           'md5 sums should collide. if not, other #2818 tests will fail');
       }).then(function () {
-        return PouchDB.utils.Promise.all(['doc1', 'doc2'].map(function (id) {
+        return testUtils.Promise.all(['doc1', 'doc2'].map(function (id) {
           return db.get(id, {attachments: true});
         })).then(function (docs) {
           var data1 = docs[0]._attachments['att.txt'].data;
@@ -620,7 +621,7 @@ adapters.forEach(function (adapter) {
         return db.put(doc1);
       }).then(function (res) {
         rev2 = res.rev;
-        return PouchDB.utils.Promise.all([rev1, rev2].map(function (rev) {
+        return testUtils.Promise.all([rev1, rev2].map(function (rev) {
           return db.get('doc1', {rev: rev, attachments: true});
         }));
       }).then(function (docs) {
@@ -646,7 +647,7 @@ adapters.forEach(function (adapter) {
         }
       };
 
-      return db.put(doc1).then(function (res) {
+      return db.put(doc1).then(function () {
         return db.get('doc1');
       }).then(function (doc1) {
         var doc2 = {
@@ -759,7 +760,7 @@ adapters.forEach(function (adapter) {
         docs: docs,
         new_edits: false
       }).then(function () {
-        return PouchDB.utils.Promise.all([
+        return testUtils.Promise.all([
           '1-a1', '2-a2', '3-a3', '1-b1'
         ].map(function (rev) {
           return db.get('fubar', {rev: rev, attachments: true});
@@ -773,7 +774,7 @@ adapters.forEach(function (adapter) {
         allDigests = allDigests.concat(digestsToForget).concat(
           digestsToRemember);
 
-        return PouchDB.utils.Promise.all(allDigests.map(function (digest) {
+        return testUtils.Promise.all(allDigests.map(function (digest) {
           var doc = {
             _attachments: {
               'newatt.txt': {
@@ -790,7 +791,7 @@ adapters.forEach(function (adapter) {
       }).then(function () {
         return db.compact();
       }).then(function () {
-        return PouchDB.utils.Promise.all(digestsToForget.map(
+        return testUtils.Promise.all(digestsToForget.map(
             function (digest) {
           var doc = {
             _attachments: {
@@ -808,7 +809,7 @@ adapters.forEach(function (adapter) {
           });
         }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(digestsToRemember.map(
+        return testUtils.Promise.all(digestsToRemember.map(
             function (digest) {
           var doc = {
             _attachments: {
@@ -1028,23 +1029,23 @@ adapters.forEach(function (adapter) {
           _id: 'doc1',
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             },
             'att2.txt': {
-              data: PouchDB.utils.btoa('2'),
+              data: testUtils.btoa('2'),
               content_type: 'text/plain'
             },
             'att3.txt': {
-              data: PouchDB.utils.btoa('3'),
+              data: testUtils.btoa('3'),
               content_type: 'text/plain'
             },
             'att4.txt': {
-              data: PouchDB.utils.btoa('4'),
+              data: testUtils.btoa('4'),
               content_type: 'text/plain'
             },
             'att5.txt': {
-              data: PouchDB.utils.btoa('5'),
+              data: testUtils.btoa('5'),
               content_type: 'text/plain'
             }
           }
@@ -1052,19 +1053,19 @@ adapters.forEach(function (adapter) {
           _id: 'doc2',
           _attachments: {
             'att3.txt': {
-              data: PouchDB.utils.btoa('3'),
+              data: testUtils.btoa('3'),
               content_type: 'text/plain'
             },
             'att4.txt': {
-              data: PouchDB.utils.btoa('4'),
+              data: testUtils.btoa('4'),
               content_type: 'text/plain'
             },
             'att5.txt': {
-              data: PouchDB.utils.btoa('5'),
+              data: testUtils.btoa('5'),
               content_type: 'text/plain'
             },
             'att6.txt': {
-              data: PouchDB.utils.btoa('6'),
+              data: testUtils.btoa('6'),
               content_type: 'text/plain'
             }
           }
@@ -1072,15 +1073,15 @@ adapters.forEach(function (adapter) {
           _id: 'doc3',
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             },
             'att6.txt': {
-              data: PouchDB.utils.btoa('6'),
+              data: testUtils.btoa('6'),
               content_type: 'text/plain'
             },
             'att7.txt': {
-              data: PouchDB.utils.btoa('7'),
+              data: testUtils.btoa('7'),
               content_type: 'text/plain'
             }
           }
@@ -1122,7 +1123,7 @@ adapters.forEach(function (adapter) {
       }).then(function () {
         return db.compact();
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return testUtils.Promise.all(
             digestsToRemember.map(function (digest) {
           return db.post({
             _attachments: {
@@ -1135,7 +1136,7 @@ adapters.forEach(function (adapter) {
           });
         }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return testUtils.Promise.all(
             digestsToForget.map(function (digest) {
           return db.post({
             _attachments: {
@@ -1158,13 +1159,13 @@ adapters.forEach(function (adapter) {
       // now that we've established md5sum collisions,
       // we can use that to detect true attachment replacement
       var db = new PouchDB(dbs.name, {auto_compaction: false});
-      var doc = { _id: 'doc1',};
+      var doc = { _id: 'doc1'};
       return db.put(doc).then(function (info) {
         doc._rev = info.rev;
         doc._deleted = true;
         doc._attachments = {
           'att1.txt': {
-            data: PouchDB.utils.btoa('1'),
+            data: testUtils.btoa('1'),
             content_type: 'application/octet-stream'
           }
         };
@@ -1196,7 +1197,7 @@ adapters.forEach(function (adapter) {
         doc._deleted = true;
         doc._attachments = {
           'att1.txt': {
-            data: PouchDB.utils.btoa('1'),
+            data: testUtils.btoa('1'),
             content_type: 'application/octet-stream'
           }
         };
@@ -1227,23 +1228,23 @@ adapters.forEach(function (adapter) {
           _id: 'doc1',
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             },
             'att2.txt': {
-              data: PouchDB.utils.btoa('2'),
+              data: testUtils.btoa('2'),
               content_type: 'text/plain'
             },
             'att3.txt': {
-              data: PouchDB.utils.btoa('3'),
+              data: testUtils.btoa('3'),
               content_type: 'text/plain'
             },
             'att4.txt': {
-              data: PouchDB.utils.btoa('4'),
+              data: testUtils.btoa('4'),
               content_type: 'text/plain'
             },
             'att5.txt': {
-              data: PouchDB.utils.btoa('5'),
+              data: testUtils.btoa('5'),
               content_type: 'text/plain'
             }
           }
@@ -1251,19 +1252,19 @@ adapters.forEach(function (adapter) {
           _id: 'doc2',
           _attachments: {
             'att3.txt': {
-              data: PouchDB.utils.btoa('3'),
+              data: testUtils.btoa('3'),
               content_type: 'text/plain'
             },
             'att4.txt': {
-              data: PouchDB.utils.btoa('4'),
+              data: testUtils.btoa('4'),
               content_type: 'text/plain'
             },
             'att5.txt': {
-              data: PouchDB.utils.btoa('5'),
+              data: testUtils.btoa('5'),
               content_type: 'text/plain'
             },
             'att6.txt': {
-              data: PouchDB.utils.btoa('6'),
+              data: testUtils.btoa('6'),
               content_type: 'text/plain'
             }
           }
@@ -1271,15 +1272,15 @@ adapters.forEach(function (adapter) {
           _id: 'doc3',
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             },
             'att6.txt': {
-              data: PouchDB.utils.btoa('6'),
+              data: testUtils.btoa('6'),
               content_type: 'text/plain'
             },
             'att7.txt': {
-              data: PouchDB.utils.btoa('7'),
+              data: testUtils.btoa('7'),
               content_type: 'text/plain'
             }
           }
@@ -1322,7 +1323,7 @@ adapters.forEach(function (adapter) {
       }).then(function () {
         return db.compact();
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return testUtils.Promise.all(
           digestsToRemember.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1335,7 +1336,7 @@ adapters.forEach(function (adapter) {
             });
           }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return testUtils.Promise.all(
           digestsToForget.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1367,7 +1368,7 @@ adapters.forEach(function (adapter) {
           _id: i.toString(),
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             }
           }
@@ -1422,17 +1423,17 @@ adapters.forEach(function (adapter) {
           doc.val = '3';
           db.post(doc, function (err, res) {
             var rev3 = res.rev;
-            db.get('doc', { rev: rev1 }, function (err, doc) {
+            db.get('doc', { rev: rev1 }, function (err) {
               err.status.should.equal(404, 'rev-1 should be missing');
               err.name.should.equal(
                 'not_found', 'rev-1 should be missing'
               );
-              db.get('doc', { rev: rev2 }, function (err, doc) {
+              db.get('doc', { rev: rev2 }, function (err) {
                 err.status.should.equal(404, 'rev-2 should be missing');
                 err.name.should.equal(
                   'not_found', 'rev-2 should be missing'
                 );
-                db.get('doc', { rev: rev3 }, function (err, doc) {
+                db.get('doc', { rev: rev3 }, function (err) {
                   done(err);
                 });
               });
@@ -1451,7 +1452,7 @@ adapters.forEach(function (adapter) {
         doc._rev = res.rev;
       }).then(function () {
 
-        var updatePromise = PouchDB.utils.Promise.resolve();
+        var updatePromise = testUtils.Promise.resolve();
 
         for (var i  = 0; i < 20; i++) {
           /* jshint loopfunc: true */
@@ -1468,7 +1469,7 @@ adapters.forEach(function (adapter) {
           var task = db.get('foo');
           for (var j =0; j < 10; j++) {
             task = task.then(function () {
-              return new PouchDB.utils.Promise(function (resolve) {
+              return new testUtils.Promise(function (resolve) {
                 setTimeout(resolve, Math.floor(Math.random() * 10));
               });
             }).then(function () {
@@ -1477,7 +1478,7 @@ adapters.forEach(function (adapter) {
           }
           tasks.push(task);
         }
-        return PouchDB.utils.Promise.all(tasks);
+        return testUtils.Promise.all(tasks);
       });
     });
 
@@ -1490,7 +1491,7 @@ adapters.forEach(function (adapter) {
         doc._rev = res.rev;
       }).then(function () {
 
-        var updatePromise = PouchDB.utils.Promise.resolve();
+        var updatePromise = testUtils.Promise.resolve();
 
         for (var i  = 0; i < 20; i++) {
           /* jshint loopfunc: true */
@@ -1507,7 +1508,7 @@ adapters.forEach(function (adapter) {
           var task = db.allDocs({key: 'foo', include_docs: true});
           for (var j =0; j < 10; j++) {
             task = task.then(function () {
-              return new PouchDB.utils.Promise(function (resolve) {
+              return new testUtils.Promise(function (resolve) {
                 setTimeout(resolve, Math.floor(Math.random() * 10));
               });
             }).then(function () {
@@ -1516,7 +1517,7 @@ adapters.forEach(function (adapter) {
           }
           tasks.push(task);
         }
-        return PouchDB.utils.Promise.all(tasks);
+        return testUtils.Promise.all(tasks);
       });
     });
 
@@ -1533,7 +1534,7 @@ adapters.forEach(function (adapter) {
         doc._rev = res.rev;
       }).then(function () {
 
-        var updatePromise = PouchDB.utils.Promise.resolve();
+        var updatePromise = testUtils.Promise.resolve();
 
         for (var i  = 0; i < 20; i++) {
           /* jshint loopfunc: true */
@@ -1550,7 +1551,7 @@ adapters.forEach(function (adapter) {
           var task = db.changes({include_docs: true});
           for (var j =0; j < 10; j++) {
             task = task.then(function () {
-              return new PouchDB.utils.Promise(function (resolve) {
+              return new testUtils.Promise(function (resolve) {
                 setTimeout(resolve, Math.floor(Math.random() * 10));
               });
             }).then(function () {
@@ -1559,7 +1560,7 @@ adapters.forEach(function (adapter) {
           }
           tasks.push(task);
         }
-        return PouchDB.utils.Promise.all(tasks);
+        return testUtils.Promise.all(tasks);
       });
     });
 
@@ -1572,23 +1573,23 @@ adapters.forEach(function (adapter) {
           _id: 'doc1',
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             },
             'att2.txt': {
-              data: PouchDB.utils.btoa('2'),
+              data: testUtils.btoa('2'),
               content_type: 'text/plain'
             },
             'att3.txt': {
-              data: PouchDB.utils.btoa('3'),
+              data: testUtils.btoa('3'),
               content_type: 'text/plain'
             },
             'att4.txt': {
-              data: PouchDB.utils.btoa('4'),
+              data: testUtils.btoa('4'),
               content_type: 'text/plain'
             },
             'att5.txt': {
-              data: PouchDB.utils.btoa('5'),
+              data: testUtils.btoa('5'),
               content_type: 'text/plain'
             }
           }
@@ -1596,19 +1597,19 @@ adapters.forEach(function (adapter) {
           _id: 'doc2',
           _attachments: {
             'att3.txt': {
-              data: PouchDB.utils.btoa('3'),
+              data: testUtils.btoa('3'),
               content_type: 'text/plain'
             },
             'att4.txt': {
-              data: PouchDB.utils.btoa('4'),
+              data: testUtils.btoa('4'),
               content_type: 'text/plain'
             },
             'att5.txt': {
-              data: PouchDB.utils.btoa('5'),
+              data: testUtils.btoa('5'),
               content_type: 'text/plain'
             },
             'att6.txt': {
-              data: PouchDB.utils.btoa('6'),
+              data: testUtils.btoa('6'),
               content_type: 'text/plain'
             }
           }
@@ -1616,15 +1617,15 @@ adapters.forEach(function (adapter) {
           _id: 'doc3',
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             },
             'att6.txt': {
-              data: PouchDB.utils.btoa('6'),
+              data: testUtils.btoa('6'),
               content_type: 'text/plain'
             },
             'att7.txt': {
-              data: PouchDB.utils.btoa('7'),
+              data: testUtils.btoa('7'),
               content_type: 'text/plain'
             }
           }
@@ -1662,7 +1663,7 @@ adapters.forEach(function (adapter) {
       }).then(function (doc2) {
         return db.remove(doc2);
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return testUtils.Promise.all(
           digestsToRemember.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1675,7 +1676,7 @@ adapters.forEach(function (adapter) {
             });
           }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return testUtils.Promise.all(
           digestsToForget.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1703,23 +1704,23 @@ adapters.forEach(function (adapter) {
           _id: 'doc1',
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             },
             'att2.txt': {
-              data: PouchDB.utils.btoa('2'),
+              data: testUtils.btoa('2'),
               content_type: 'text/plain'
             },
             'att3.txt': {
-              data: PouchDB.utils.btoa('3'),
+              data: testUtils.btoa('3'),
               content_type: 'text/plain'
             },
             'att4.txt': {
-              data: PouchDB.utils.btoa('4'),
+              data: testUtils.btoa('4'),
               content_type: 'text/plain'
             },
             'att5.txt': {
-              data: PouchDB.utils.btoa('5'),
+              data: testUtils.btoa('5'),
               content_type: 'text/plain'
             }
           }
@@ -1727,19 +1728,19 @@ adapters.forEach(function (adapter) {
           _id: 'doc2',
           _attachments: {
             'att3.txt': {
-              data: PouchDB.utils.btoa('3'),
+              data: testUtils.btoa('3'),
               content_type: 'text/plain'
             },
             'att4.txt': {
-              data: PouchDB.utils.btoa('4'),
+              data: testUtils.btoa('4'),
               content_type: 'text/plain'
             },
             'att5.txt': {
-              data: PouchDB.utils.btoa('5'),
+              data: testUtils.btoa('5'),
               content_type: 'text/plain'
             },
             'att6.txt': {
-              data: PouchDB.utils.btoa('6'),
+              data: testUtils.btoa('6'),
               content_type: 'text/plain'
             }
           }
@@ -1747,15 +1748,15 @@ adapters.forEach(function (adapter) {
           _id: 'doc3',
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             },
             'att6.txt': {
-              data: PouchDB.utils.btoa('6'),
+              data: testUtils.btoa('6'),
               content_type: 'text/plain'
             },
             'att7.txt': {
-              data: PouchDB.utils.btoa('7'),
+              data: testUtils.btoa('7'),
               content_type: 'text/plain'
             }
           }
@@ -1796,7 +1797,7 @@ adapters.forEach(function (adapter) {
         });
         return db.bulkDocs(docs);
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return testUtils.Promise.all(
           digestsToRemember.map(function (digest) {
             return db.post({
               _attachments: {
@@ -1809,7 +1810,7 @@ adapters.forEach(function (adapter) {
             });
           }));
       }).then(function () {
-        return PouchDB.utils.Promise.all(
+        return testUtils.Promise.all(
           digestsToForget.map(function (digest) {
             return db.post({
               _attachments: {
@@ -2072,7 +2073,7 @@ adapters.forEach(function (adapter) {
           _id: i.toString(),
           _attachments: {
             'att1.txt': {
-              data: PouchDB.utils.btoa('1'),
+              data: testUtils.btoa('1'),
               content_type: 'text/plain'
             }
           }

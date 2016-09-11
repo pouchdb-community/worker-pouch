@@ -72,24 +72,23 @@ adapters.forEach(function (adapter) {
     });
 
     it('Missing docs should be returned with all revisions', function (done) {
-      new PouchDB(dbs.name, function (err, db) {
-        var revs = ['1-a', '2-a', '2-b'];
-        db.revsDiff({'foo': revs }, function (err, results) {
-          results.should.include.keys('foo');
-          results.foo.missing.should.deep.equal(revs, 'listed all revs');
-          done();
-        });
+      var db = new PouchDB(dbs.name);
+      var revs = ['1-a', '2-a', '2-b'];
+      db.revsDiff({'foo': revs }, function (err, results) {
+        results.should.include.keys('foo');
+        results.foo.missing.should.deep.equal(revs, 'listed all revs');
+        done();
       });
     });
 
     it('Conflicting revisions that are available', function (done) {
       var doc = {_id: '939', _rev: '1-a'};
       function createConflicts(db, callback) {
-        db.put(doc, { new_edits: false }, function (err, res) {
+        db.put(doc, { new_edits: false }, function () {
           testUtils.putAfter(db, {
             _id: '939',
             _rev: '2-a'
-          }, '1-a', function (err, res) {
+          }, '1-a', function () {
             testUtils.putAfter(db, {
               _id: '939',
               _rev: '2-b'
@@ -111,7 +110,7 @@ adapters.forEach(function (adapter) {
         db.put({
           _id: '935',
           _rev: '1-a'
-        }, { new_edits: false }, function (err, info) {
+        }, { new_edits: false }, function () {
           testUtils.putAfter(db, {
             _id: '935',
             _rev: '2-a',
@@ -129,10 +128,9 @@ adapters.forEach(function (adapter) {
     });
 
     it('Revs diff with empty revs', function () {
-      return new PouchDB(dbs.name).then(function (db) {
-        return db.revsDiff({}).then(function (res) {
-          should.exist(res);
-        });
+      var db = new PouchDB(dbs.name);
+      return db.revsDiff({}).then(function (res) {
+        should.exist(res);
       });
     });
 

@@ -141,12 +141,12 @@ adapters.forEach(function (adapters) {
       }
 
       function waitForConflictsResolved() {
-        return new PouchDB.utils.Promise(function (resolve, reject) {
+        return new testUtils.Promise(function (resolve) {
           var changes = remote.changes({
             live: true,
             include_docs: true,
             conflicts: true
-          }).on('change', function(change) {
+          }).on('change', function (change) {
             if (!('_conflicts' in change.doc)) {
               changes.cancel();
             }
@@ -156,7 +156,7 @@ adapters.forEach(function (adapters) {
       }
 
       function cleanup() {
-        return new PouchDB.utils.Promise(function (resolve, reject) {
+        return new testUtils.Promise(function (resolve, reject) {
           sync.on('complete', resolve);
           sync.on('error', reject);
           sync.cancel();
@@ -186,7 +186,7 @@ adapters.forEach(function (adapters) {
         return local.get('1', {conflicts: true}).then(function (doc) {
           return local.remove(doc._id, doc._conflicts[0]);
         });
-      }).then(function (x) {
+      }).then(function () {
         return waitForConflictsResolved();
       }).then(function () {
         return local.get('1', {conflicts: true, revs: true});
@@ -214,12 +214,12 @@ adapters.forEach(function (adapters) {
       var repl2 = local.replicate.from(remote, { live: true });
 
       function waitForConflictsResolved() {
-        return new PouchDB.utils.Promise(function (resolve, reject) {
+        return new testUtils.Promise(function (resolve) {
           var changes = remote.changes({
             live: true,
             include_docs: true,
             conflicts: true
-          }).on('change', function(change) {
+          }).on('change', function (change) {
             if (!('_conflicts' in change.doc)) {
               changes.cancel();
             }
@@ -259,7 +259,7 @@ adapters.forEach(function (adapters) {
       }
 
       function cleanup() {
-        return new PouchDB.utils.Promise(function (resolve, reject) {
+        return new testUtils.Promise(function (resolve, reject) {
           var numDone = 0;
 
           function checkDone() {
@@ -302,7 +302,7 @@ adapters.forEach(function (adapters) {
         return local.get('1', {conflicts: true}).then(function (doc) {
           return local.remove(doc._id, doc._conflicts[0]);
         });
-      }).then(function() {
+      }).then(function () {
         return waitForConflictsResolved();
       }).then(function () {
         return local.get('1', {conflicts: true, revs: true});
