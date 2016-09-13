@@ -12,7 +12,7 @@ git:
   depth: 30
 
 addons:
-  firefox: "48.0"
+  firefox: "48.0.2"
 
 script: npm run $COMMAND
 
@@ -26,13 +26,13 @@ before_script:
 env:
   matrix:
   # break into many small tests so travis doesn't complain
-  - CLIENT=selenium:firefox SUITE=1 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=2 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=3 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=4 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=5 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=6 COMMAND=test
-  - CLIENT=selenium:firefox SUITE=7 COMMAND=test
+  - CLIENT=selenium:firefox:48.0.2 SUITE=1 COMMAND=test
+  - CLIENT=selenium:firefox:48.0.2 SUITE=2 COMMAND=test
+  - CLIENT=selenium:firefox:48.0.2 SUITE=3 COMMAND=test
+  - CLIENT=selenium:firefox:48.0.2 SUITE=4 COMMAND=test
+  - CLIENT=selenium:firefox:48.0.2 SUITE=5 COMMAND=test
+  - CLIENT=selenium:firefox:48.0.2 SUITE=6 COMMAND=test
+  - CLIENT=selenium:firefox:48.0.2 SUITE=7 COMMAND=test
   - COMMAND=test-custom
 
 branches:
