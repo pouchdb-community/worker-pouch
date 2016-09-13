@@ -28,9 +28,8 @@ adapters.forEach(function (adapters) {
     });
 
     it('retry stuff', function (done) {
-      this.timeout(2000000);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
       var allDocs = remote.allDocs;
 
       // Reject attempting to write 'foo' 3 times, then let it succeed
@@ -58,8 +57,8 @@ adapters.forEach(function (adapters) {
         // and waiting on changes (no error)
         if (paused === 1) {
           should.not.exist(e);
-          return remote.put({}, 'foo').then(function () {
-            return remote.put({}, 'bar');
+          return remote.put({_id: 'foo'}).then(function () {
+            return remote.put({_id: 'bar'});
           });
         }
         // Second paused event is due to failed writes, should
@@ -75,8 +74,8 @@ adapters.forEach(function (adapters) {
       });
 
       rep.on('complete', function () {
-        active.should.be.within(3, 4);
-        paused.should.be.at.least(3);
+        active.should.be.at.least(2);
+        paused.should.be.at.least(2);
         done();
       });
 
@@ -90,7 +89,7 @@ adapters.forEach(function (adapters) {
         }
       });
 
-      remote.put({}, 'hazaa');
+      remote.put({_id: 'hazaa'});
     });
 
     it('#3687 active event only fired once...', function (done) {
@@ -116,7 +115,7 @@ adapters.forEach(function (adapters) {
           rep.cancel();
         }
         if (paused === 1) {
-          return remote.put({}, 'foo');
+          return remote.put({_id: 'foo'});
         } else {
           rep.cancel();
         }
@@ -132,7 +131,7 @@ adapters.forEach(function (adapters) {
         ++numChanges;
       });
 
-      rep.on('complete', function() {
+      rep.on('complete', function () {
         try {
           active.should.be.within(1, 2);
           paused.should.equal(2);
@@ -145,18 +144,18 @@ adapters.forEach(function (adapters) {
 
       rep.catch(done);
 
-      remote.put({}, 'hazaa');
+      remote.put({_id: 'hazaa'});
     });
 
     it('source doesn\'t leak "destroyed" event', function () {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
 
       var origGet = remote.get;
       var i = 0;
-      remote.get = function (opts) {
+      remote.get = function () {
         // Reject three times, every 5th time
         if ((++i % 5 === 0) && i <= 15) {
           return Promise.reject(new Error('flunking you'));
@@ -172,7 +171,7 @@ adapters.forEach(function (adapters) {
 
       var numDocsToWrite = 10;
 
-      return remote.post({}).then(function() {
+      return remote.post({}).then(function () {
         var originalNumListeners;
         var posted = 0;
 
@@ -224,11 +223,11 @@ adapters.forEach(function (adapters) {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
 
       var origGet = remote.get;
       var i = 0;
-      remote.get = function (opts) {
+      remote.get = function () {
         // Reject three times, every 5th time
         if ((++i % 5 === 0) && i <= 15) {
           return Promise.reject(new Error('flunking you'));
@@ -244,7 +243,7 @@ adapters.forEach(function (adapters) {
 
       var numDocsToWrite = 10;
 
-      return remote.post({}).then(function() {
+      return remote.post({}).then(function () {
         var originalNumListeners;
         var posted = 0;
 
@@ -303,15 +302,15 @@ adapters.forEach(function (adapters) {
       'complete', 'error', 'paused', 'active',
       'change', 'cancel'
     ].forEach(function (event) {
-      it.skip('returnValue doesn\'t leak "' + event + '" event', function () {
+      it('returnValue doesn\'t leak "' + event + '" event', function () {
 
         var db = new PouchDB(dbs.name);
         var remote = new PouchDB(dbs.remote);
-        var Promise = PouchDB.utils.Promise;
+        var Promise = testUtils.Promise;
 
         var origGet = remote.get;
         var i = 0;
-        remote.get = function (opts) {
+        remote.get = function () {
           // Reject three times, every 5th time
           if ((++i % 5 === 0) && i <= 15) {
             return Promise.reject(new Error('flunking you'));
@@ -327,7 +326,7 @@ adapters.forEach(function (adapters) {
 
         var numDocsToWrite = 10;
 
-        return remote.post({}).then(function() {
+        return remote.post({}).then(function () {
           var originalNumListeners;
           var posted = 0;
 
@@ -364,8 +363,11 @@ adapters.forEach(function (adapters) {
                 if (typeof originalNumListeners !== 'number') {
                   originalNumListeners = numListeners;
                 } else {
-                  numListeners.should.equal(originalNumListeners,
-                    'numListeners should never increase');
+                  if(event === "paused") {
+                    Math.abs(numListeners -  originalNumListeners).should.be.at.most(1);
+                  } else {
+                    Math.abs(numListeners -  originalNumListeners).should.be.eql(0);
+                  }
                 }
               } catch (err) {
                 cleanup(err);
@@ -376,15 +378,15 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it.skip('returnValue doesn\'t leak "change" event w/ onChange', function () {
+    it('returnValue doesn\'t leak "change" event w/ onChange', function () {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
 
       var origGet = remote.get;
       var i = 0;
-      remote.get = function (opts) {
+      remote.get = function () {
         // Reject three times, every 5th time
         if ((++i % 5 === 0) && i <= 15) {
           return Promise.reject(new Error('flunking you'));
@@ -400,7 +402,7 @@ adapters.forEach(function (adapters) {
 
       var numDocsToWrite = 10;
 
-      return remote.post({}).then(function() {
+      return remote.post({}).then(function () {
         var originalNumListeners;
         var posted = 0;
 
@@ -452,12 +454,12 @@ adapters.forEach(function (adapters) {
       this.timeout(200000);
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
 
       var flunked = 0;
       var origGet = remote.get;
       var i = 0;
-      remote.get = function (opts) {
+      remote.get = function () {
         // Reject five times, every 5th time
         if ((++i % 5 === 0) && i <= 25) {
           flunked++;
@@ -476,7 +478,7 @@ adapters.forEach(function (adapters) {
       var paused = 0;
       var numDocsToWrite = 50;
 
-      return remote.post({}).then(function() {
+      return remote.post({}).then(function () {
         var originalNumListeners;
         var posted = 0;
 
@@ -525,8 +527,7 @@ adapters.forEach(function (adapters) {
               if (typeof originalNumListeners !== 'number') {
                 originalNumListeners = numListeners;
               } else {
-                numListeners.should.equal(originalNumListeners,
-                  'numListeners should never increase');
+                Math.abs(numListeners -  originalNumListeners).should.be.at.most(1);
               }
             } catch (err) {
               cleanup(err);
@@ -541,13 +542,16 @@ adapters.forEach(function (adapters) {
     });
 
 
-    it.skip('4049 retry while starting offline', function (done) {
+    it('4049 retry while starting offline', function (done) {
 
-      var ajax = PouchDB.utils.ajax;
+      var db = new PouchDB(dbs.name);
+      var remote = new PouchDB(dbs.remote);
+
+      var ajax = remote._ajax;
       var _called = 0;
       var startFailing = false;
 
-      PouchDB.utils.ajax = function (opts, cb) {
+      remote._ajax = function (opts, cb) {
         if (!startFailing || ++_called > 3) {
           ajax.apply(this, arguments);
         } else {
@@ -555,20 +559,69 @@ adapters.forEach(function (adapters) {
         }
       };
 
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
-
-      remote.post({a: 'doc'}).then(function(doc) {
+      remote.post({a: 'doc'}).then(function () {
         startFailing = true;
         var rep = db.replicate.from(remote, {live: true, retry: true})
-          .on('change', function() { rep.cancel(); });
+          .on('change', function () { rep.cancel(); });
 
-        rep.on('complete', function() {
-          PouchDB.utils.ajax = ajax;
+        rep.on('complete', function () {
+          remote._ajax = ajax;
           done();
         });
       });
 
+    });
+
+    it('#5157 replicate many docs with live+retry', function () {
+      var Promise = testUtils.Promise;
+      var numDocs = 512; // uneven number
+      var docs = [];
+      for (var i = 0; i < numDocs; i++) {
+        // mix of generation-1 and generation-2 docs
+        if (i % 2 === 0) {
+          docs.push({
+            _id: testUtils.uuid(),
+            _rev: '1-x',
+            _revisions: { start: 1, ids: ['x'] }
+          });
+        } else {
+          docs.push({
+            _id: testUtils.uuid(),
+            _rev: '2-x',
+            _revisions: { start: 2, ids: ['x', 'y'] }
+          });
+        }
+      }
+      var db = new PouchDB(dbs.name);
+      var remote = new PouchDB(dbs.remote);
+      return db.bulkDocs({
+        docs: docs,
+        new_edits: false
+      }).then(function () {
+        function replicatePromise(fromDB, toDB) {
+          return new Promise(function (resolve, reject) {
+            var replication = fromDB.replicate.to(toDB, {
+              live: true,
+              retry: true,
+              batches_limit: 10,
+              batch_size: 20
+            }).on('paused', function (err) {
+              if (!err) {
+                replication.cancel();
+              }
+            }).on('complete', resolve)
+              .on('error', reject);
+          });
+        }
+        return Promise.all([
+          replicatePromise(db, remote),
+          replicatePromise(remote, db)
+        ]);
+      }).then(function () {
+        return remote.info();
+      }).then(function (info) {
+        info.doc_count.should.equal(numDocs);
+      });
     });
 
   });
