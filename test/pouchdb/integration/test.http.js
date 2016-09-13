@@ -20,14 +20,13 @@ describe('test.http.js', function () {
       if (!isCouchDB) {
         return done();
       }
-      new PouchDB(dbs.name).then(function (db) {
-        db.destroy(function () {
-          instantDB = new PouchDB(dbs.name, { skipSetup: true });
-          instantDB.post({ test: 'abc' }, function (err, info) {
-            should.exist(err);
-            err.name.should.equal('not_found', 'Skipped setup of database');
-            done();
-          });
+      var db = new PouchDB(dbs.name);
+      db.destroy(function () {
+        instantDB = new PouchDB(dbs.name, { skipSetup: true });
+        instantDB.post({ test: 'abc' }, function (err) {
+          should.exist(err);
+          err.name.should.equal('not_found', 'Skipped setup of database');
+          done();
         });
       });
     });
@@ -39,20 +38,19 @@ describe('test.http.js', function () {
       if (!isCouchDB) {
         return done();
       }
-      new PouchDB(dbs.name).then(function (db) {
-        db.destroy(function () {
-          instantDB = new PouchDB(dbs.name, { skip_setup: true });
-          instantDB.post({ test: 'abc' }, function (err, info) {
-            should.exist(err);
-            err.name.should.equal('not_found', 'Skipped setup of database');
-            done();
-          });
+      var db = new PouchDB(dbs.name);
+      db.destroy(function () {
+        instantDB = new PouchDB(dbs.name, { skip_setup: true });
+        instantDB.post({ test: 'abc' }, function (err) {
+          should.exist(err);
+          err.name.should.equal('not_found', 'Skipped setup of database');
+          done();
         });
       });
     });
   });
 
-  it.skip('Issue 1269 redundant _changes requests', function (done) {
+  it('Issue 1269 redundant _changes requests', function (done) {
     var docs = [];
     var num = 100;
     for (var i = 0; i < num; i++) {
@@ -62,13 +60,13 @@ describe('test.http.js', function () {
       });
     }
     var db = new PouchDB(dbs.name);
-    db.bulkDocs({ docs: docs }, function (err, result) {
+    db.bulkDocs({ docs: docs }, function () {
       db.info(function (err, info) {
         var update_seq = info.update_seq;
 
         var callCount = 0;
-        var ajax = PouchDB.utils.ajax;
-        PouchDB.utils.ajax = function (opts) {
+        var ajax = db._ajax;
+        db._ajax = function (opts) {
           if (/_changes/.test(opts.url)) {
             callCount++;
           }
@@ -76,10 +74,10 @@ describe('test.http.js', function () {
         };
         db.changes({
           since: update_seq
-        }).on('change', function (change) {
-        }).on('complete', function (result) {
+        }).on('change', function () {
+        }).on('complete', function () {
           callCount.should.equal(1, 'One _changes call to complete changes');
-          PouchDB.utils.ajax = ajax;
+          db._ajax = ajax;
           done();
         }).on('error', done);
       });
@@ -91,7 +89,7 @@ describe('test.http.js', function () {
       _id: '_design/foo/bar'
     };
     var db = new PouchDB(dbs.name);
-    db.bulkDocs({ docs: [ddoc] }, function (err, result) {
+    db.bulkDocs({ docs: [ddoc] }, function () {
       db.get(ddoc._id, function (err, doc) {
         should.not.exist(err);
         doc._id.should.equal(ddoc._id, 'Correct doc returned');
@@ -100,27 +98,19 @@ describe('test.http.js', function () {
     });
   });
 
-  it('#2853 test uri parsing usernames/passwords', function () {
-    var uri = PouchDB.utils.parseUri(
-      'http://u%24ern%40me:p%26%24%24w%40rd@foo.com');
-    uri.password.should.equal('p&$$w@rd');
-    uri.user.should.equal('u$ern@me');
-    uri.host.should.equal('foo.com');
-  });
-
-  it.skip('Properly escape url params #4008', function() {
-    var ajax = PouchDB.utils.ajax;
-    PouchDB.utils.ajax = function(opts) {
+  it('Properly escape url params #4008', function () {
+    var db = new PouchDB(dbs.name);
+    var ajax = db._ajax;
+    db._ajax = function (opts) {
       opts.url.should.not.contain('[');
       ajax.apply(this, arguments);
     };
-    var db = new PouchDB(dbs.name);
-    return db.changes({doc_ids: ['1']}).then(function() {
-      PouchDB.utils.ajax = ajax;
+    return db.changes({doc_ids: ['1']}).then(function () {
+      db._ajax = ajax;
     });
   });
 
-  it.skip('Allows the "ajax timeout" to extend "changes timeout"', function(done) {
+  it('Allows the "ajax timeout" to extend "changes timeout"', function (done) {
     var timeout = 120000;
     var db = new PouchDB(dbs.name, {
       skipSetup: true,
@@ -129,9 +119,9 @@ describe('test.http.js', function () {
       }
     });
 
-    var ajax = PouchDB.utils.ajax;
+    var ajax = db._ajax;
     var ajaxOpts;
-    PouchDB.utils.ajax = function(opts) {
+    db._ajax = function (opts) {
       if (/changes/.test(opts.url)) {
         ajaxOpts = opts;
         changes.cancel();
@@ -141,10 +131,10 @@ describe('test.http.js', function () {
 
     var changes = db.changes();
 
-    changes.on('complete', function(change) {
+    changes.on('complete', function () {
       should.exist(ajaxOpts);
       ajaxOpts.timeout.should.equal(timeout);
-      PouchDB.utils.ajax = ajax;
+      db._ajax = ajax;
       done();
     });
 
@@ -157,16 +147,6 @@ describe('test.http.js', function () {
       }
     });
     return db.info();
-  });
-
-  it('getUrl() works (used by plugins)', function () {
-    var db = new PouchDB(dbs.name);
-    db.getUrl().should.match(/^http/);
-  });
-
-  it('getHeaders() works (used by plugins)', function () {
-    var db = new PouchDB(dbs.name);
-    db.getHeaders().should.deep.equal({});
   });
 
   it('test url too long error for allDocs()', function () {
@@ -187,21 +167,31 @@ describe('test.http.js', function () {
     });
   });
 
-  it('4358 db.info rejects when server is down', function() {
+  it('4358 db.info rejects when server is down', function () {
     var db = new PouchDB('http://example.com/foo');
     return db.info().then(function () {
       throw new Error('expected an error');
-    }).catch(function(err) {
+    }).catch(function (err) {
       should.exist(err);
     });
   });
 
-  it('4358 db.destroy rejects when server is down', function() {
+  it('4358 db.destroy rejects when server is down', function () {
     var db = new PouchDB('http://example.com/foo');
     return db.destroy().then(function () {
       throw new Error('expected an error');
-    }).catch(function(err) {
+    }).catch(function (err) {
       should.exist(err);
+    });
+  });
+
+
+  it('5574 Create a pouch with / in name and prefix url', function () {
+    var db = new PouchDB('test/suffix', {
+      prefix: testUtils.adapterUrl('http', '')
+    });
+    return db.info().then(function () {
+      return db.destroy();
     });
   });
 
