@@ -9,7 +9,7 @@ node_js:
 sudo: false
 
 addons:
-  firefox: "41.0.1"
+  firefox: "47.0.2"
 
 script: npm run $COMMAND
 
