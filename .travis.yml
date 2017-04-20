@@ -19,7 +19,7 @@ addons:
 script: npm run $COMMAND
 
 before_install:
-  - add-apt-repository ppa:couchdb/stable -y
+  - sudo add-apt-repository ppa:couchdb/stable -y
 
 before_script:
   - "export DISPLAY=:99.0"
