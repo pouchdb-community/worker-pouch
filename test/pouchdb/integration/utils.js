@@ -27173,7 +27173,8 @@ testUtils.promisify = function (fun, context) {
     });
   };
 };
-
+var PouchForCoverage = require('../../packages/node_modules/pouchdb-for-coverage');
+var pouchUtils = PouchForCoverage.utils;
 testUtils.makeBlob = function (data, type) {
   if (typeof process !== 'undefined' && !process.browser) {
     return new Buffer(data, 'binary');
