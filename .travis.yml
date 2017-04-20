@@ -18,6 +18,7 @@ addons:
 script: npm run $COMMAND
 
 before_script:
+  - curl localhost:5984
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 
