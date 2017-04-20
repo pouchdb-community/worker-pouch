@@ -15,10 +15,10 @@ var accessKey = process.env.SAUCE_ACCESS_KEY;
 
 // process.env.CLIENT is a colon seperated list of
 // (saucelabs|selenium):browserName:browserVerion:platform
-var tmp = (process.env.CLIENT || 'selenium:firefox').split(':');
+var tmp = (process.env.CLIENT || 'selenium:chrome').split(':');
 var client = {
   runner: tmp[0] || 'selenium',
-  browser: tmp[1] || 'firefox',
+  browser: tmp[1] || 'chrome',
   version: tmp[2] || null, // Latest
   platform: tmp[3] || null
 };
@@ -44,7 +44,7 @@ testUrl += '?';
 testUrl += querystring.stringify(qs);
 
 if (process.env.TRAVIS &&
-    client.browser !== 'firefox' &&
+    client.browser !== 'chrome' &&
     client.browser !== 'phantomjs' &&
     process.env.TRAVIS_SECURE_ENV_VARS === 'false') {
   console.error('Not running test, cannot connect to saucelabs');
