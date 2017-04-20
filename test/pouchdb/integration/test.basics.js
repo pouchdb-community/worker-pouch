@@ -484,8 +484,8 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: bad_docs }, function (err) {
         err.name.should.equal('doc_validation');
-        err.status.should.equal(testUtils.errors.DOC_VALIDATION.status);
-        err.message.should.equal(testUtils.errors.DOC_VALIDATION.message +
+        err.status.should.equal(PouchDB.Errors.DOC_VALIDATION.status);
+        err.message.should.equal(PouchDB.Errors.DOC_VALIDATION.message +
                                  ': _zing',
                                  'correct error message returned');
         done();
@@ -561,7 +561,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       db.put({test: 'somestuff' }, function (err) {
         should.exist(err);
-        err.message.should.equal(testUtils.errors.MISSING_ID.message,
+        err.message.should.equal(PouchDB.Errors.MISSING_ID.message,
                                  'correct error message returned');
         done();
       });
@@ -574,8 +574,8 @@ adapters.forEach(function (adapter) {
         test: 'somestuff'
       }, function (err) {
         should.exist(err);
-        err.status.should.equal(testUtils.errors.RESERVED_ID.status);
-        err.message.should.equal(testUtils.errors.RESERVED_ID.message,
+        err.status.should.equal(PouchDB.Errors.RESERVED_ID.status);
+        err.message.should.equal(PouchDB.Errors.RESERVED_ID.message,
                                  'correct error message returned');
         done();
       });
