@@ -2,9 +2,6 @@ dist: trusty
 
 language: node_js
 
-services:
-  - couchdb
-
 node_js:
   - "5"
 
@@ -13,13 +10,13 @@ sudo: true
 addons:
   apt:
     packages:
-      - couchdb
       - google-chrome-stable
 
 script: npm run $COMMAND
 
 before_install:
   - sudo add-apt-repository ppa:couchdb/stable -y
+  - sudo apt-get install couchdb
 
 before_script:
   - "export DISPLAY=:99.0"
