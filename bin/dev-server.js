@@ -12,41 +12,52 @@ var http_proxy = require('pouchdb-http-proxy');
 var http_server = require("http-server");
 var fs = require('fs');
 var indexfile = "./test/test.js";
-var dotfile = "./test/.test-bundle.js";
-var outfile = "./test/test-bundle.js";
+var testOutfile = "test-bundle.js";
+var swInFile = "./test/custom-api/service-worker.js";
+var swOutFile = "sw.js";
+var swTestInFile = "./test/custom-api/service-worker-test.js";
+var swTestOutFile = "sw-test-bundle.js";
 var watchify = require("watchify");
 var browserify = require('browserify');
-var w = watchify(browserify(indexfile, {
-  cache: {},
-  packageCache: {},
-  fullPaths: true,
-  debug: true
-}));
-
-w.on('update', bundle);
-bundle();
-
 var filesWritten = false;
 var serverStarted = false;
 var readyCallback;
 
-function bundle() {
-  var wb = w.bundle();
-  wb.on('error', function (err) {
-    console.error(String(err));
-  });
-  wb.on("end", end);
-  wb.pipe(fs.createWriteStream(dotfile));
 
-  function end() {
-    fs.rename(dotfile, outfile, function (err) {
-      if (err) { return console.error(err); }
-      console.log('Updated:', outfile);
-      filesWritten = true;
-      checkReady();
+function setupBundle(indexfile, outFileName) {
+  var dotfile = `./test/.${outFileName}`;
+  var outfile = `./test/${outFileName}`;
+  var w = watchify(browserify(indexfile, {
+    cache: {},
+    packageCache: {},
+    fullPaths: true,
+    debug: true
+  }));
+
+  w.on('update', bundle);
+  bundle();
+
+  function bundle() {
+    var wb = w.bundle();
+    wb.on('error', function (err) {
+      console.error(String(err));
     });
+    wb.on("end", end);
+    wb.pipe(fs.createWriteStream(dotfile));
+
+    function end() {
+      fs.rename(dotfile, outfile, function (err) {
+        if (err) { return console.error(err); }
+        console.log('Updated:', outfile);
+        filesWritten = true;
+        checkReady();
+      });
+    }
   }
 }
+setupBundle(indexfile, testOutfile);
+setupBundle(swInFile, swOutFile);
+setupBundle(swTestInFile, swTestOutFile);
 
 function startServers(callback) {
   readyCallback = callback;

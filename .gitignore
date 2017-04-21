@@ -7,3 +7,5 @@ npm-debug.log
 testdb*
 test/custom-api/worker-bundle.js
 lib/workerified/index.js
+test/sw-test-bundle.js
+test/sw.js

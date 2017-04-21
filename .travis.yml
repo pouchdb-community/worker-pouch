@@ -34,6 +34,7 @@ env:
   - CLIENT=selenium:chrome SUITE=5 COMMAND=test
   - CLIENT=selenium:chrome SUITE=6 COMMAND=test
   - CLIENT=selenium:chrome SUITE=7 COMMAND=test
+  - CLIENT=selenium:chrome SUITE=8 COMMAND=test
   - COMMAND=test-custom
 
 branches:
