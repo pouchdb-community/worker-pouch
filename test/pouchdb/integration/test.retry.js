@@ -29,7 +29,7 @@ adapters.forEach(function (adapters) {
 
     it('retry stuff', function (done) {
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
       var allDocs = remote.allDocs;
 
       // Reject attempting to write 'foo' 3 times, then let it succeed
@@ -151,7 +151,7 @@ adapters.forEach(function (adapters) {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
 
       var origGet = remote.get;
       var i = 0;
@@ -223,7 +223,7 @@ adapters.forEach(function (adapters) {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
 
       var origGet = remote.get;
       var i = 0;
@@ -306,7 +306,7 @@ adapters.forEach(function (adapters) {
 
         var db = new PouchDB(dbs.name);
         var remote = new PouchDB(dbs.remote);
-        var Promise = PouchDB.utils.Promise;
+        var Promise = testUtils.Promise;
 
         var origGet = remote.get;
         var i = 0;
@@ -382,7 +382,7 @@ adapters.forEach(function (adapters) {
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
 
       var origGet = remote.get;
       var i = 0;
@@ -454,7 +454,7 @@ adapters.forEach(function (adapters) {
       this.timeout(200000);
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
 
       var flunked = 0;
       var origGet = remote.get;
@@ -573,20 +573,20 @@ adapters.forEach(function (adapters) {
     });
 
     it('#5157 replicate many docs with live+retry', function () {
-      var Promise = PouchDB.utils.Promise;
+      var Promise = testUtils.Promise;
       var numDocs = 512; // uneven number
       var docs = [];
       for (var i = 0; i < numDocs; i++) {
         // mix of generation-1 and generation-2 docs
         if (i % 2 === 0) {
           docs.push({
-            _id: PouchDB.utils.uuid(),
+            _id: testUtils.uuid(),
             _rev: '1-x',
             _revisions: { start: 1, ids: ['x'] }
           });
         } else {
           docs.push({
-            _id: PouchDB.utils.uuid(),
+            _id: testUtils.uuid(),
             _rev: '2-x',
             _revisions: { start: 2, ids: ['x', 'y'] }
           });

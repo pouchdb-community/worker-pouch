@@ -40,7 +40,7 @@ adapters.forEach(function (adapter) {
 
     it('PouchDB emits destroyed when using {name: foo}', function () {
       var db = new PouchDB({name: 'testdb'});
-      return new PouchDB.utils.Promise(function (resolve) {
+      return new testUtils.Promise(function (resolve) {
         PouchDB.once('destroyed', function (name) {
           name.should.equal('testdb');
           resolve();
@@ -53,7 +53,7 @@ adapters.forEach(function (adapter) {
       var db1 = new PouchDB('testdb');
       var db2 = new PouchDB('testdb');
 
-      return new PouchDB.utils.Promise(function (resolve) {
+      return new testUtils.Promise(function (resolve) {
         var called = 0;
         function checkDone() {
           if (++called === 2) {
@@ -68,7 +68,7 @@ adapters.forEach(function (adapter) {
 
     it('3900 db emits destroyed event', function () {
       var db = new PouchDB('testdb');
-      return new PouchDB.utils.Promise(function (resolve) {
+      return new testUtils.Promise(function (resolve) {
         db.once('destroyed', function () {
           resolve();
         });
@@ -78,7 +78,7 @@ adapters.forEach(function (adapter) {
 
     it('3900 db emits destroyed event 2', function () {
       var db = new PouchDB('testdb');
-      return new PouchDB.utils.Promise(function (resolve) {
+      return new testUtils.Promise(function (resolve) {
         db.once('destroyed', function () {
           resolve();
         });

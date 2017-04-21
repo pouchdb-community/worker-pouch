@@ -157,7 +157,7 @@ adapters.forEach(function (adapter) {
 
       db.info(function (err, info) {
         var update_seq = info.update_seq;
-
+        
         testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
           function () {
           db.get('1', function (err, doc) {
@@ -185,8 +185,8 @@ adapters.forEach(function (adapter) {
 
       db.info(function (err, info) {
         var update_seq = info.update_seq;
-
-        testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
+        
+        testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)), 
           function () {
           db.get('3', function (err, doc) {
             doc.updated = 'totally';
@@ -636,7 +636,7 @@ adapters.forEach(function (adapter) {
       return db.bulkDocs(docs).then(function () {
         return paginate().then(function () {
           // try running all queries at once to try to isolate race condition
-          return PouchDB.utils.Promise.all(allkeys.map(function (key) {
+          return testUtils.Promise.all(allkeys.map(function (key) {
             return db.allDocs({
               limit: 100,
               include_docs: true,

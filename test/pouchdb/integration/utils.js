@@ -3013,7 +3013,7 @@ module.exports = Array.isArray || function (arr) {
   } else {
     factory(this);
   }
-}).call(this, function(root) {
+}).call(this, function(root) { 
 
   var slice   = Array.prototype.slice,
       each    = Array.prototype.forEach;
@@ -3021,7 +3021,7 @@ module.exports = Array.isArray || function (arr) {
   var extend = function(obj) {
     if(typeof obj !== 'object') throw obj + ' is not an object' ;
 
-    var sources = slice.call(arguments, 1);
+    var sources = slice.call(arguments, 1); 
 
     each.call(sources, function(source) {
       if(source) {
@@ -3031,7 +3031,7 @@ module.exports = Array.isArray || function (arr) {
           } else {
             obj[prop] = source[prop];
           }
-        }
+        } 
       }
     });
 
@@ -3312,18 +3312,18 @@ function mkdirP (p, opts, f, made) {
     else if (!opts || typeof opts !== 'object') {
         opts = { mode: opts };
     }
-
+    
     var mode = opts.mode;
     var xfs = opts.fs || fs;
-
+    
     if (mode === undefined) {
         mode = _0777 & (~process.umask());
     }
     if (!made) made = null;
-
+    
     var cb = f || function () {};
     p = path.resolve(p);
-
+    
     xfs.mkdir(p, mode, function (er) {
         if (!er) {
             made = made || p;
@@ -3356,10 +3356,10 @@ mkdirP.sync = function sync (p, opts, made) {
     if (!opts || typeof opts !== 'object') {
         opts = { mode: opts };
     }
-
+    
     var mode = opts.mode;
     var xfs = opts.fs || fs;
-
+    
     if (mode === undefined) {
         mode = _0777 & (~process.umask());
     }
@@ -5843,7 +5843,7 @@ Dual licensed under the MIT and GPL licenses.
  *   >>> Math.uuid(15)     // 15 character ID (default base=62)
  *   "VcydxgltxrVZSTV"
  *
- *   // Two arguments - returns ID of the specified length, and radix.
+ *   // Two arguments - returns ID of the specified length, and radix. 
  *   // (Radix must be <= 62)
  *   >>> Math.uuid(8, 2)  // 8 character ID (base=2)
  *   "01001010"
@@ -13095,7 +13095,7 @@ function padLeft(str, padWith, upToLength) {
 
 var MIN_MAGNITUDE = -324; // verified by -Number.MIN_VALUE
 var MAGNITUDE_DIGITS = 3; // ditto
-var SEP = ''; // set to '_' for easier debugging
+var SEP = ''; // set to '_' for easier debugging 
 
 function collate(a, b) {
 
@@ -15134,7 +15134,7 @@ function replicate$1(src, target, opts, returnValue, result) {
         throw new Error('cancelled');
       }
 
-      // `res` doesn't include full documents (which live in `docs`), so we create a map of
+      // `res` doesn't include full documents (which live in `docs`), so we create a map of 
       // (id -> error), and check for errors while iterating over `docs`
       var errorsById = Object.create(null);
       res.forEach(function (res) {
@@ -16917,7 +16917,7 @@ Dual licensed under the MIT and GPL licenses.
  *   >>> Math.uuid(15)     // 15 character ID (default base=62)
  *   "VcydxgltxrVZSTV"
  *
- *   // Two arguments - returns ID of the specified length, and radix.
+ *   // Two arguments - returns ID of the specified length, and radix. 
  *   // (Radix must be <= 62)
  *   >>> Math.uuid(8, 2)  // 8 character ID (base=2)
  *   "01001010"
@@ -24169,7 +24169,7 @@ function padLeft(str, padWith, upToLength) {
 
 var MIN_MAGNITUDE = -324; // verified by -Number.MIN_VALUE
 var MAGNITUDE_DIGITS = 3; // ditto
-var SEP = ''; // set to '_' for easier debugging
+var SEP = ''; // set to '_' for easier debugging 
 
 function collate(a, b) {
 
@@ -26208,7 +26208,7 @@ function replicate$1(src, target, opts, returnValue, result) {
         throw new Error('cancelled');
       }
 
-      // `res` doesn't include full documents (which live in `docs`), so we create a map of
+      // `res` doesn't include full documents (which live in `docs`), so we create a map of 
       // (id -> error), and check for errors while iterating over `docs`
       var errorsById = Object.create(null);
       res.forEach(function (res) {
@@ -26944,6 +26944,11 @@ testUtils.isSyncGateway = function () {
     testUtils.params().SERVER === 'sync-gateway';
 };
 
+testUtils.isExpressRouter = function () {
+  return 'SERVER' in testUtils.params() &&
+    testUtils.params().SERVER === 'pouchdb-express-router';
+};
+
 testUtils.params = function () {
   if (typeof process !== 'undefined' && !process.browser) {
     return process.env;
@@ -26958,7 +26963,6 @@ testUtils.params = function () {
     return acc;
   }, {});
 };
-
 
 testUtils.couchHost = function () {
   if (typeof window !== 'undefined' && window.cordova) {
@@ -26987,15 +26991,15 @@ testUtils.readBlob = function (blob, callback) {
   } else {
     var reader = new FileReader();
     reader.onloadend = function () {
-
+      
       var binary = "";
       var bytes = new Uint8Array(this.result || '');
       var length = bytes.byteLength;
-
+      
       for (var i = 0; i < length; i++) {
         binary += String.fromCharCode(bytes[i]);
       }
-
+      
       callback(binary);
     };
     reader.readAsArrayBuffer(blob);
@@ -27003,7 +27007,7 @@ testUtils.readBlob = function (blob, callback) {
 };
 
 testUtils.readBlobPromise = function (blob) {
-  return new PouchDB.utils.Promise(function (resolve) {
+  return new testUtils.Promise(function (resolve) {
     testUtils.readBlob(blob, resolve);
   });
 };
@@ -27013,7 +27017,7 @@ testUtils.base64Blob = function (blob, callback) {
     callback(blob.toString('base64'));
   } else {
     testUtils.readBlob(blob, function (binary) {
-      callback(PouchDB.utils.btoa(binary));
+      callback(testUtils.btoa(binary));
     });
   }
 };
@@ -27046,7 +27050,7 @@ testUtils.cleanup = function (dbs, done) {
 // in rev_tree). Doc must have _rev. If prevRev is not specified
 // just insert doc with correct _rev (new_edits=false!)
 testUtils.putAfter = function (db, doc, prevRev, callback) {
-  var newDoc = PouchDB.utils.extend({}, doc);
+  var newDoc = testUtils.extend({}, doc);
   if (!prevRev) {
     db.put(newDoc, { new_edits: false }, callback);
     return;
@@ -27102,7 +27106,7 @@ testUtils.putTree = function (db, tree, callback) {
 };
 
 testUtils.isCouchDB = function (cb) {
-  PouchDB.ajax({url: testUtils.couchHost() + '/' }, function (err, res) {
+  testUtils.ajax({url: testUtils.couchHost() + '/' }, function (err, res) {
     cb('couchdb' in res);
   });
 };
@@ -27162,7 +27166,7 @@ testUtils.promisify = function (fun, context) {
     for (var i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-    return new PouchDB.utils.Promise(function (resolve, reject) {
+    return new testUtils.Promise(function (resolve, reject) {
       args.push(function (err, res) {
         if (err) {
           return reject(err);
@@ -27173,8 +27177,22 @@ testUtils.promisify = function (fun, context) {
     });
   };
 };
+
+// We need to use pouchdb-for-coverage here to ensure that e.g pouchdb-utils
+// and pouchdb-ajax don't get pulled in, because then our coverage tests
+// would complain that we're not using the "whole" thing.
 var PouchForCoverage = require('../../packages/node_modules/pouchdb-for-coverage');
 var pouchUtils = PouchForCoverage.utils;
+testUtils.binaryStringToBlob = pouchUtils.binaryStringToBlobOrBuffer;
+testUtils.btoa = pouchUtils.btoa;
+testUtils.atob = pouchUtils.atob;
+testUtils.Promise = pouchUtils.Promise;
+testUtils.ajax = PouchForCoverage.ajax;
+testUtils.uuid = pouchUtils.uuid;
+testUtils.parseUri = pouchUtils.parseUri;
+testUtils.errors = PouchForCoverage.Errors;
+testUtils.extend = require('js-extend').extend;
+
 testUtils.makeBlob = function (data, type) {
   if (typeof process !== 'undefined' && !process.browser) {
     return new Buffer(data, 'binary');
@@ -27183,6 +27201,47 @@ testUtils.makeBlob = function (data, type) {
       type: (type || 'text/plain')
     });
   }
+};
+
+testUtils.getUnHandledRejectionEventName = function () {
+  return typeof window !== 'undefined' ? 'unhandledrejection' :
+    'unhandledRejection';
+};
+
+testUtils.addGlobalEventListener = function (eventName, listener) {
+  // The window test has to go first because the process test will pass
+  // in the browser's test environment
+  if (typeof window !== 'undefined' && window.addEventListener) {
+    return window.addEventListener(eventName, listener);
+  }
+
+  if (typeof process !== 'undefined') {
+    return process.on(eventName, listener);
+  }
+
+  return null;
+};
+
+testUtils.addUnhandledRejectionListener = function (listener) {
+  return testUtils.addGlobalEventListener(
+    testUtils.getUnHandledRejectionEventName(), listener);
+};
+
+testUtils.removeGlobalEventListener = function (eventName, listener) {
+  if (typeof process !== 'undefined') {
+    return process.removeListener(eventName, listener);
+  }
+
+  if (typeof window !== 'undefined' && window.removeEventListener) {
+    return window.removeEventListener(eventName, listener);
+  }
+
+  return null;
+};
+
+testUtils.removeUnhandledRejectionListener = function (listener) {
+  return testUtils.removeGlobalEventListener(
+    testUtils.getUnHandledRejectionEventName(), listener);
 };
 
 if (typeof process !== 'undefined' && !process.browser) {
