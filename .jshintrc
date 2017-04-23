@@ -16,7 +16,6 @@
   "white": true,
   "indent": 2,
   "maxlen": 100,
-  "esversion": 6,
   "predef": [
     "chrome",
     "eio",
