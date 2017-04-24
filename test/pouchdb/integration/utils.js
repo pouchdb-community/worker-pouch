@@ -1083,18 +1083,18 @@ function mkdirP (p, opts, f, made) {
     else if (!opts || typeof opts !== 'object') {
         opts = { mode: opts };
     }
-    
+
     var mode = opts.mode;
     var xfs = opts.fs || fs;
-    
+
     if (mode === undefined) {
         mode = _0777 & (~process.umask());
     }
     if (!made) made = null;
-    
+
     var cb = f || function () {};
     p = path.resolve(p);
-    
+
     xfs.mkdir(p, mode, function (er) {
         if (!er) {
             made = made || p;
@@ -1127,10 +1127,10 @@ mkdirP.sync = function sync (p, opts, made) {
     if (!opts || typeof opts !== 'object') {
         opts = { mode: opts };
     }
-    
+
     var mode = opts.mode;
     var xfs = opts.fs || fs;
-    
+
     if (mode === undefined) {
         mode = _0777 & (~process.umask());
     }
@@ -1201,8 +1201,8 @@ module.exports = function (val, options) {
     return parse(val)
   } else if (type === 'number' && isNaN(val) === false) {
     return options.long ?
-			fmtLong(val) :
-			fmtShort(val)
+      fmtLong(val) :
+      fmtShort(val)
   }
   throw new Error('val is not a non-empty string or a valid number. val=' + JSON.stringify(val))
 }
@@ -3676,7 +3676,7 @@ Dual licensed under the MIT and GPL licenses.
  *   >>> Math.uuid(15)     // 15 character ID (default base=62)
  *   "VcydxgltxrVZSTV"
  *
- *   // Two arguments - returns ID of the specified length, and radix. 
+ *   // Two arguments - returns ID of the specified length, and radix.
  *   // (Radix must be <= 62)
  *   >>> Math.uuid(8, 2)  // 8 character ID (base=2)
  *   "01001010"
@@ -5827,7 +5827,7 @@ function padLeft(str, padWith, upToLength) {
 
 var MIN_MAGNITUDE = -324; // verified by -Number.MIN_VALUE
 var MAGNITUDE_DIGITS = 3; // ditto
-var SEP = ''; // set to '_' for easier debugging 
+var SEP = ''; // set to '_' for easier debugging
 
 function collate(a, b) {
 
@@ -6187,10 +6187,10 @@ function numToIndexableString(num) {
 
 
 var collate$1 = Object.freeze({
-	collate: collate,
-	normalizeKey: normalizeKey,
-	toIndexableString: toIndexableString,
-	parseIndexableString: parseIndexableString
+  collate: collate,
+  normalizeKey: normalizeKey,
+  toIndexableString: toIndexableString,
+  parseIndexableString: parseIndexableString
 });
 
 // create a comparator based on the sort object
@@ -6760,7 +6760,13 @@ function parseDoc(doc, newEdits) {
 }
 
 var thisAtob = function (str) {
-  return atob(str);
+  try {
+    return atob(str);
+  } catch (ex) {
+    var newError = ex.message;
+    newError += ' string was typeof: ' + typeof str + '; string was:' +str;
+    throw new DOMException(newError);
+  }
 };
 
 var thisBtoa = function (str) {
@@ -14082,7 +14088,7 @@ function replicate(src, target, opts, returnValue, result) {
         throw new Error('cancelled');
       }
 
-      // `res` doesn't include full documents (which live in `docs`), so we create a map of 
+      // `res` doesn't include full documents (which live in `docs`), so we create a map of
       // (id -> error), and check for errors while iterating over `docs`
       var errorsById = Object.create(null);
       res.forEach(function (res) {
@@ -15834,7 +15840,7 @@ function getMultiFieldQueryOpts(selector, index) {
       finish(i);
       break;
     } else if (i > 0) {
-      if (Object.keys(matcher).some(isNonLogicalMatcher)) { // non-logical are ignored 
+      if (Object.keys(matcher).some(isNonLogicalMatcher)) { // non-logical are ignored
         finish(i);
         break;
       }
@@ -16026,7 +16032,7 @@ function find$2(db, requestDef) {
         opts.skip = requestDef.skip;
       }
     }
-    
+
     return PouchPromise$1.resolve().then(function () {
       if (indexToUse.name === '_all_docs') {
         return doAllDocs(db, opts);
@@ -16228,15 +16234,15 @@ testUtils.readBlob = function (blob, callback) {
   } else {
     var reader = new FileReader();
     reader.onloadend = function () {
-      
+
       var binary = "";
       var bytes = new Uint8Array(this.result || '');
       var length = bytes.byteLength;
-      
+
       for (var i = 0; i < length; i++) {
         binary += String.fromCharCode(bytes[i]);
       }
-      
+
       callback(binary);
     };
     reader.readAsArrayBuffer(blob);
