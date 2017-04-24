@@ -80,6 +80,15 @@ function testComplete(result) {
 function startSelenium(callback) {
   // Start selenium
   var opts = {version: '2.45.0'};
+  if (client.browser === 'chrome') {
+    opts.drivers = {
+      chrome: {
+        version: '2.29',
+        arch: process.arch,
+        baseURL: 'https://chromedriver.storage.googleapis.com'
+      }
+    };
+  }
   selenium.install(opts, function(err) {
     if (err) {
       console.error('Failed to install selenium', err);

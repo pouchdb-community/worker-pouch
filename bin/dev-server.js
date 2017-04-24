@@ -25,39 +25,47 @@ var readyCallback;
 
 
 function setupBundle(indexfile, outFileName) {
-  var dotfile = `./test/.${outFileName}`;
-  var outfile = `./test/${outFileName}`;
-  var w = watchify(browserify(indexfile, {
-    cache: {},
-    packageCache: {},
-    fullPaths: true,
-    debug: true
-  }));
+  return new Promise(function (resolve, reject) {
+    var dotfile = `./test/.${outFileName}`;
+    var outfile = `./test/${outFileName}`;
+    var w = watchify(browserify(indexfile, {
+      cache: {},
+      packageCache: {},
+      fullPaths: true,
+      debug: true
+    }));
 
-  w.on('update', bundle);
-  bundle();
+    w.on('update', bundle);
+    bundle();
 
-  function bundle() {
-    var wb = w.bundle();
-    wb.on('error', function (err) {
-      console.error(String(err));
-    });
-    wb.on("end", end);
-    wb.pipe(fs.createWriteStream(dotfile));
-
-    function end() {
-      fs.rename(dotfile, outfile, function (err) {
-        if (err) { return console.error(err); }
-        console.log('Updated:', outfile);
-        filesWritten = true;
-        checkReady();
+    function bundle() {
+      var wb = w.bundle();
+      wb.on('error', function (err) {
+        console.error(String(err));
+        reject(err);
       });
+      wb.on("end", end);
+      wb.pipe(fs.createWriteStream(dotfile));
+
+      function end() {
+        fs.rename(dotfile, outfile, function (err) {
+          if (err) {
+            console.error(err);
+            reject(err);
+          }
+          console.log('Updated:', outfile);
+          filesWritten = true;
+          resolve();
+        });
+      }
     }
-  }
+  });
 }
-setupBundle(indexfile, testOutfile);
-setupBundle(swInFile, swOutFile);
-setupBundle(swTestInFile, swTestOutFile);
+var bundlePromises = [];
+bundlePromises.push(setupBundle(indexfile, testOutfile));
+bundlePromises.push(setupBundle(swInFile, swOutFile));
+bundlePromises.push(setupBundle(swTestInFile, swTestOutFile));
+Promise.all(bundlePromises).then(() => checkReady());
 
 function startServers(callback) {
   readyCallback = callback;
