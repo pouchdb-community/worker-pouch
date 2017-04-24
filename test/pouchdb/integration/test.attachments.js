@@ -85,7 +85,7 @@ adapters.forEach(function (adapter) {
       }
     };
 
-    it('3357 Attachment names cant start with _', function (done) {
+    it('3357 Attachment names cant start with _', function () {
       var db = new PouchDB(dbs.name);
       var doc = {_id: 'baz', _attachments: {
         '_text1.txt': {
@@ -94,11 +94,27 @@ adapters.forEach(function (adapter) {
         }
       }};
       return db.put(doc).then(function () {
-        done('Should not succeed');
+        throw 'Should not succeed';
       }).catch(function (err) {
         err.name.should.equal('bad_request');
-        done();
       });
+    });
+
+    it('5736 warning for putAttachment without content_type', function () {
+      var db = new PouchDB(dbs.name);
+      return db.putAttachment('bar', 'baz.txt', testUtils.btoa('text'), '');
+    });
+
+    it('5736 warning for bulkDocs attachments without content_type', function () {
+      var db = new PouchDB(dbs.name);
+      var doc = {
+        _attachments: {
+          'att.txt': {
+            data: testUtils.btoa('well')
+          }
+        }
+      };
+      return db.bulkDocs([doc]);
     });
 
     it('fetch atts with open_revs and missing', function () {
@@ -3852,7 +3868,7 @@ repl_adapters.forEach(function (adapters) {
 
       db.put(doc).then(function () {
         return db.get('x');
-      }).then(function (doc){
+      }).then(function (doc) {
         var digests = Object.keys(doc._attachments).map(function (a) {
           return doc._attachments[a].digest;
         });
