@@ -3,7 +3,7 @@ dist: trusty
 language: node_js
 
 node_js:
-  - "6"
+  - "5"
 
 sudo: true
 
@@ -19,6 +19,7 @@ before_install:
   - sudo apt-get install couchdb
 
 before_script:
+  - google-chrome --version
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - "npm install add-cors-to-couchdb"
