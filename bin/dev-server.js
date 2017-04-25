@@ -68,7 +68,7 @@ function watchAll() {
 }
 
 Promise.all([
-  // rebuildTestBundle(),
+  rebuildTestBundle(),
   rebuildServiceWorker(),
   rebuildServiceWorkerTest()
 ]).then(() => {
