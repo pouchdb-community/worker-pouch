@@ -71,7 +71,11 @@ Promise.all([
   rebuildTestBundle(),
   rebuildServiceWorker(),
   rebuildServiceWorkerTest()
-]).then(() => checkReady());
+]).then(() => {
+  console.log('Rebuilt test bundles');
+  filesWritten = true;
+  checkReady();
+});
 
 function startServers(callback) {
   readyCallback = callback;
