@@ -8630,7 +8630,7 @@ function readAttachmentsAsBlobOrBuffer(row) {
   Object.keys(atts).forEach(function (filename) {
     var att = atts[filename];
     if (!att.data) {
-      throw new Error('IN readAttachmentsAsBlobOrBuffer, att data undefined, doc was: ', JSON.stringify(row.doc, null, 2));
+      throw new Error('IN readAttachmentsAsBlobOrBuffer, att data undefined, doc was: ' + JSON.stringify(row.doc, null, 2));
     }
     att.data = b64ToBluffer(att.data, att.content_type);
   });
@@ -9995,7 +9995,7 @@ function createAbstractMapReduce(localDocName, mapper, reducer, ddocValidator) {
       Object.keys(atts).forEach(function (filename) {
         var att = atts[filename];
         if (!att.data) {
-          throw new Error('IN readAttachmentsAsBlobOrBuffer2, att data undefined, doc was: ', JSON.stringify(row.doc, null, 2));
+          throw new Error('IN readAttachmentsAsBlobOrBuffer2, att data undefined, doc was: ' + JSON.stringify(row.doc, null, 2));
         }
         atts[filename].data = b64ToBluffer(att.data, att.content_type);
       });
