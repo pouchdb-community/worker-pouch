@@ -1,29 +1,20 @@
-dist: trusty
-
 language: node_js
 
 node_js:
-  - "6"
+  - "5"
 
-sudo: true
-
-addons:
-  apt:
-    packages:
-      - google-chrome-stable
+sudo: false
 
 script: npm run $COMMAND
 
-before_install:
-  - sudo add-apt-repository ppa:couchdb/stable -y
-  - sudo apt-get install couchdb
-
 before_script:
-  - google-chrome --version
+  - export CHROME_BIN=chromium-browser
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
+
   - "npm install add-cors-to-couchdb"
   - "./node_modules/.bin/add-cors-to-couchdb"
+  - npm ls
 
 env:
   matrix:
