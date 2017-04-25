@@ -4080,9 +4080,6 @@ function parseDoc(doc, newEdits) {
 }
 
 var thisAtob = function (str) {
-  if (!str) {
-    return str;
-  }
   try {
     return atob(str);
   } catch (ex) {
@@ -8625,7 +8622,7 @@ var MAX_SIMULTANEOUS_REVS = 50;
 
 var supportsBulkGetMap = {};
 
-function readAttachmentsAsBlobOrBuffer(row) {
+function readAttachmentsAsBlobOrBuffer(row, resp) {
   var atts = row.doc && row.doc._attachments;
   if (!atts) {
     return;
@@ -8633,7 +8630,7 @@ function readAttachmentsAsBlobOrBuffer(row) {
   Object.keys(atts).forEach(function (filename) {
     var att = atts[filename];
     if (!att.data && att.data !== '') {
-      throw new Error('In readAttachmentsAsBlobOrBuffer Data is undefined and not empty string!!!'+ JSON.stringify(row.doc, null, 2));
+      throw new Error('In readAttachmentsAsBlobOrBuffer Data is undefined and not empty string!!!'+ JSON.stringify(resp, null, 2));
     }
     att.data = b64ToBluffer(att.data, att.content_type);
   });
@@ -9340,7 +9337,7 @@ function HttpPouch(opts, callback) {
       body: body
     }).then(function (res) {
       if (opts.include_docs && opts.attachments && opts.binary) {
-        res.rows.forEach(readAttachmentsAsBlobOrBuffer);
+        res.rows.forEach(readAttachmentsAsBlobOrBuffer, res);
       }
       callback(null, res);
     }).catch(callback);

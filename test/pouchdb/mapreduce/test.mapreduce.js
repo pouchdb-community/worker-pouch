@@ -742,6 +742,9 @@ function tests(suiteName, dbName, dbType, viewType) {
         }).then(function (res) {
           var attachments = res.rows.map(function (row) {
             var doc = row.doc;
+            if (!doc._attachments['foo.png'].data) {
+              throw new Error('FOO.png is not set, here is what we know:'+JSON.stringify(res, null, 2));
+            }
             delete doc._attachments['foo.png'].revpos;
             return doc._attachments;
           });
