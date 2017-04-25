@@ -4080,7 +4080,7 @@ function parseDoc(doc, newEdits) {
 }
 
 var thisAtob = function (str) {
-  if (str === '') {
+  if (!str) {
     return str;
   }
   try {
