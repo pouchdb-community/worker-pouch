@@ -8622,7 +8622,7 @@ var MAX_SIMULTANEOUS_REVS = 50;
 
 var supportsBulkGetMap = {};
 
-function readAttachmentsAsBlobOrBuffer(row, resp) {
+function readAttachmentsAsBlobOrBuffer(row, index, resp) {
   var atts = row.doc && row.doc._attachments;
   if (!atts) {
     return;
@@ -9337,7 +9337,7 @@ function HttpPouch(opts, callback) {
       body: body
     }).then(function (res) {
       if (opts.include_docs && opts.attachments && opts.binary) {
-        res.rows.forEach(readAttachmentsAsBlobOrBuffer, res);
+        res.rows.forEach(readAttachmentsAsBlobOrBuffer);
       }
       callback(null, res);
     }).catch(callback);
