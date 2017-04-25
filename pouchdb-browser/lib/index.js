@@ -8632,6 +8632,9 @@ function readAttachmentsAsBlobOrBuffer(row) {
   }
   Object.keys(atts).forEach(function (filename) {
     var att = atts[filename];
+    if (!att.data && att.data !== '') {
+      throw new Error('In readAttachmentsAsBlobOrBuffer Data is undefined and not empty string!!!'+ JSON.stringify(row.doc, null, 2));
+    }
     att.data = b64ToBluffer(att.data, att.content_type);
   });
 }
@@ -9994,6 +9997,9 @@ function createAbstractMapReduce(localDocName, mapper, reducer, ddocValidator) {
       }
       Object.keys(atts).forEach(function (filename) {
         var att = atts[filename];
+        if (!att.data && att.data !== '') {
+          throw new Error('In readAttachmentsAsBlobOrBuffer2 Data is undefined and not empty string!!!'+ JSON.stringify(row.doc, null, 2));
+        }
         atts[filename].data = b64ToBluffer(att.data, att.content_type);
       });
     });
