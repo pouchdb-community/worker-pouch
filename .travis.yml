@@ -10,10 +10,15 @@ sudo: false
 
 addons:
   firefox: "53.0"
+  apt:
+    packages:
+      - oracle-java8-set-default
 
 script: npm run $COMMAND
 
 before_script:
+  - firefox --version
+  - java -version
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 
