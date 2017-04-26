@@ -8,7 +8,7 @@ services:
 node_js:
   - "5"
 
-sudo: false
+sudo: required
 
 addons:
   apt:
@@ -18,6 +18,10 @@ addons:
       - google-chrome-stable
 
 script: npm run $COMMAND
+
+before_install:
+  - sudo add-apt-repository ppa:couchdb/stable -y
+  - sudo apt-get install couchdb
 
 before_script:
   - google-chrome --version
@@ -36,7 +40,6 @@ env:
   - CLIENT=selenium:chrome SUITE=5 COMMAND=test
   - CLIENT=selenium:chrome SUITE=6 COMMAND=test
   - CLIENT=selenium:chrome SUITE=7 COMMAND=test
-  - CLIENT=selenium:chrome SUITE=8 COMMAND=test
   - COMMAND=test-custom
 
 branches:
