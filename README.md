@@ -6,7 +6,7 @@ worker-pouch [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg
 var db = new PouchDB('mydb', {adapter: 'worker'});
 ```
 
-Adapter plugin to use PouchDB over [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker). Transparently proxies all PouchDB API requests to the worker, so that the most expensive database operations are run in a separate thread.
+Adapter plugin to use PouchDB over [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Worker) and [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). Transparently proxies all PouchDB API requests to the worker, so that the most expensive database operations are run in a separate thread.
 
 Basically, worker-pouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker.
 
@@ -34,10 +34,10 @@ Usage
 ---
 
 This plugin has two modes:
-* [Easy Mode](#easy-mode), supporting Chrome and Firefox, with a fallback for other browsers, and
-* [Custom Mode](#custom-mode), potentially supporting more browsers, and allowing you to use your own Web Worker.
+* [Easy Mode](#easy-mode), for Web Workers, supporting Chrome and Firefox, with a fallback for other browsers, and
+* [Custom Mode](#custom-mode), potentially supporting more browsers, for Service Workers and allowing you to use your own Web Worker.
 
-In Easy Mode, you don't need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob). Whereas in Custom Mode, you must manage the Web Worker yourself.
+In Easy Mode, you don't need to set up the worker yourself, because the script is loaded in a [Blob URL](https://developer.mozilla.org/en-US/docs/Web/API/Blob). Whereas in Custom Mode, you must manage the Web Worker or Service Worker yourself.
 
 ### Easy Mode
 
@@ -133,6 +133,54 @@ registerWorkerPouch(self, pouchCreator);
 
 The PouchDB worker code will listen for messages from the client side, but should ignore any non-worker-pouch messages, so you are free to still use `worker.postMessage()` as desired.
 
+#### Service Workers
+
+Communicating with a Service Worker is the same as with a Web Worker.
+However, you have to wait for the Service Worker to install and start controlling the page. Here's an example:
+
+```js
+navigator.serviceWorker.register('sw.js', {
+      scope: './'
+    }).then(function () {
+      if (navigator.serviceWorker.controller) {
+        // already active and controlling this page
+        return navigator.serviceWorker;
+      }
+      // wait for a new service worker to control this page
+      return new Promise(function (resolve) {
+        function onControllerChange() {
+          navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+          resolve(navigator.serviceWorker);
+        }
+        navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+      });
+    }).then(function (serviceWorker) { // the worker is ready
+      db = new PouchDB('testdb', {
+        adapter: 'worker',
+        worker: function() {
+          return serviceWorker;
+        }
+      });
+      return db;
+    }).catch(console.log.bind(console));
+  });
+```
+
+Then inside your Service Worker:
+
+```js
+// worker-side code
+var registerWorkerPouch = require('worker-pouch/worker');
+var PouchDB = require('pouchdb');
+
+// attach to global `self` object
+registerWorkerPouch(self, PouchDB);
+
+self.addEventListener('activate', function(event) {
+  event.waitUntil(self.clients.claim()); // activate right now
+});
+```
+
 Performance benefits of worker-pouch
 ----
 
@@ -168,8 +216,8 @@ workerPouch.isSupportedBrowser().then(function (supported) {
   if (supported) {
     db = new PouchDB('mydb', {adapter: 'worker'});
   } else { // fall back to a normal PouchDB
-	db = new PouchDB('mydb');
-  }  
+  db = new PouchDB('mydb');
+  }
 }).catch(console.log.bind(console)); // shouldn't throw an error
 ```
 
@@ -184,7 +232,7 @@ workerPouch.isSupportedBrowser().then(function (supported) {
   if (supported) {
     return {db: new PouchDB('mydb', {adapter: 'worker'})};
   } else { // fall back to a normal PouchDB
-	return {db: new PouchDB('mydb')};
+  return {db: new PouchDB('mydb')};
   }
 }).then(function (dbWrapper) {
   var db = dbWrapper.db; // now I have a PouchDB
@@ -203,13 +251,13 @@ PouchDB.debug.enable('pouchdb:worker:*');
 FAQs
 ---
 
-#### Wait, doesn't PouchDB already work in a Web Worker?
+#### Wait, doesn't PouchDB already work in a Web Worker or Service Worker?
 
-Yes, you can use pure PouchDB inside of a Web Worker. But the point of this plugin is to let you use PouchDB from *outside a Web Worker*, and then have it transparently proxy to another PouchDB that is isolated in a Web Worker.
+Yes, you can use pure PouchDB inside of a Web Worker or Service Worker. But the point of this plugin is to let you use PouchDB from *outside a Web Worker or Service Worker*, and then have it transparently proxy to another PouchDB that is isolated in a Web Worker or Service Worker.
 
 #### What browsers are supported?
 
-Only those browsers that 1) allow blob URLs for Web Worker scripts, and 2) allow IndexedDB inside of a Web Worker. Today, that means Chrome and Firefox.
+Only those browsers that 1) Allow service workers or 2) Allow blob URLs for Web Worker scripts and allow IndexedDB inside of a Web Worker. Today, that means Chrome and Firefox.
 
 #### Can I use it with other plugins?
 
