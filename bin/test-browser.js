@@ -15,10 +15,10 @@ var accessKey = process.env.SAUCE_ACCESS_KEY;
 
 // process.env.CLIENT is a colon seperated list of
 // (saucelabs|selenium):browserName:browserVerion:platform
-var tmp = (process.env.CLIENT || 'selenium:chrome').split(':');
+var tmp = (process.env.CLIENT || 'selenium:firefox').split(':');
 var client = {
   runner: tmp[0] || 'selenium',
-  browser: tmp[1] || 'chrome',
+  browser: tmp[1] || 'firefox',
   version: tmp[2] || null, // Latest
   platform: tmp[3] || null
 };
@@ -44,7 +44,7 @@ testUrl += '?';
 testUrl += querystring.stringify(qs);
 
 if (process.env.TRAVIS &&
-    client.browser !== 'chrome' &&
+    client.browser !== 'firefox' &&
     client.browser !== 'phantomjs' &&
     process.env.TRAVIS_SECURE_ENV_VARS === 'false') {
   console.error('Not running test, cannot connect to saucelabs');
@@ -79,7 +79,7 @@ function testComplete(result) {
 
 function startSelenium(callback) {
   // Start selenium
-  var opts = {version: '2.45.0'};
+  var opts = {};
   if (client.browser === 'chrome') {
     opts.drivers = {
       chrome: {
@@ -88,6 +88,7 @@ function startSelenium(callback) {
         baseURL: 'https://chromedriver.storage.googleapis.com'
       }
     };
+    opts.version = '2.45.0';
   }
   selenium.install(opts, function(err) {
     if (err) {
