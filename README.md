@@ -1,4 +1,4 @@
-worker-pouch [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg)](https://travis-ci.org/nolanlawson/worker-pouch)
+worker-pouch [![Build Status](https://travis-ci.org/pouchdb-community/worker-pouch.svg)](https://travis-ci.org/pouchdb-community/worker-pouch)
 =====
 
 ```js
@@ -158,7 +158,7 @@ navigator.serviceWorker.register('sw.js', {
       db = new PouchDB('testdb', {
         adapter: 'worker',
         worker: function() {
-          return serviceWorker;
+          return serviceWorker.controller;
         }
       });
       return db;

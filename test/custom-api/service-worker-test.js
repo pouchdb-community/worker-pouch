@@ -30,7 +30,7 @@ describe('Service Worker custom api test suite', function () {
       db = new PouchDB('testdb', {
         adapter: 'worker',
         worker: function() {
-          return serviceWorker;
+          return serviceWorker.controller;
         }
       });
       return db;
