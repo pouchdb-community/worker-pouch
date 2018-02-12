@@ -79,10 +79,10 @@ function testComplete(result) {
 
 function startSelenium(callback) {
   // Start selenium
-  var opts = {version: '2.45.0'};
+  var opts = {};
   selenium.install(opts, function(err) {
     if (err) {
-      console.error('Failed to install selenium');
+      console.error('Failed to install selenium', err);
       process.exit(1);
     }
     selenium.start(opts, function(err, server) {

@@ -7,46 +7,75 @@ var HTTP_PORT = 8000;
 var CORS_PORT = 2020;
 
 var cors_proxy = require('corsproxy');
+var watch = require('watch-glob');
 var Promise = require('bluebird');
 var http_proxy = require('pouchdb-http-proxy');
 var http_server = require("http-server");
+var debounce = require('lodash.debounce');
 var fs = require('fs');
-var indexfile = "./test/test.js";
-var dotfile = "./test/.test-bundle.js";
-var outfile = "./test/test-bundle.js";
-var watchify = require("watchify");
 var browserify = require('browserify');
-var w = watchify(browserify(indexfile, {
-  cache: {},
-  packageCache: {},
-  fullPaths: true,
-  debug: true
-}));
-
-w.on('update', bundle);
-bundle();
-
 var filesWritten = false;
 var serverStarted = false;
 var readyCallback;
 
-function bundle() {
-  var wb = w.bundle();
-  wb.on('error', function (err) {
-    console.error(String(err));
-  });
-  wb.on("end", end);
-  wb.pipe(fs.createWriteStream(dotfile));
+var rebuildPromise = Promise.resolve();
 
-  function end() {
-    fs.rename(dotfile, outfile, function (err) {
-      if (err) { return console.error(err); }
-      console.log('Updated:', outfile);
-      filesWritten = true;
-      checkReady();
-    });
-  }
+function browserifyPromise(src, dest) {
+  return new Promise(function (resolve, reject) {
+    browserify(src, {debug: true}).bundle().pipe(fs.createWriteStream(dest))
+      .on('finish', resolve)
+      .on('error', reject);
+  });
 }
+
+function rebuildServiceWorker() {
+  rebuildPromise = rebuildPromise.then(function () {
+    return browserifyPromise('./test/custom-api/service-worker.js',
+      './test/sw.js');
+  }).then(function () {
+    console.log('Rebuilt test/sw.js');
+  }).catch(console.error);
+  return rebuildPromise;
+}
+
+function rebuildServiceWorkerTest() {
+  rebuildPromise = rebuildPromise.then(function () {
+    return browserifyPromise('./test/custom-api/service-worker-test.js',
+      './test/sw-test-bundle.js');
+  }).then(function () {
+    console.log('Rebuilt test/sw-test-bundle.js');
+  }).catch(console.error);
+  return rebuildPromise;
+}
+
+function rebuildTestBundle() {
+  rebuildPromise = rebuildPromise.then(function () {
+    return browserifyPromise('./test/test.js',
+      './test/test-bundle.js');
+  }).then(function () {
+    console.log('Rebuilt test/test-bundle.js');
+  }).catch(console.error);
+  return rebuildPromise;
+}
+
+function watchAll() {
+  watch(['./test/custom-api/service-worker.js'],
+    debounce(rebuildServiceWorker, 700, {leading: true}));
+  watch(['./test/custom-api/service-worker-test.js'],
+    debounce(rebuildServiceWorkerTest, 700, {leading: true}));
+  watch(['./test/test.js";'],
+    debounce(rebuildTestBundle, 700, {leading: true}));
+}
+
+Promise.all([
+  rebuildTestBundle(),
+  rebuildServiceWorker(),
+  rebuildServiceWorkerTest()
+]).then(() => {
+  console.log('Rebuilt test bundles');
+  filesWritten = true;
+  checkReady();
+});
 
 function startServers(callback) {
   readyCallback = callback;
@@ -84,6 +113,7 @@ function checkReady() {
 
 if (require.main === module) {
   startServers();
+  watchAll();
 } else {
   module.exports.start = startServers;
 }
