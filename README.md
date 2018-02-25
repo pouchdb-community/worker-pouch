@@ -1,4 +1,4 @@
-worker-pouch [![Build Status](https://travis-ci.org/nolanlawson/worker-pouch.svg)](https://travis-ci.org/nolanlawson/worker-pouch)
+worker-pouch [![Build Status](https://travis-ci.org/pouchdb-community/worker-pouch.svg)](https://travis-ci.org/pouchdb-community/worker-pouch)
 =====
 
 ```js
@@ -10,7 +10,7 @@ Adapter plugin to use PouchDB over [Web Workers](https://developer.mozilla.org/e
 
 Basically, worker-pouch allows you use the PouchDB API like you normally would, but your UI will suffer fewer hiccups, because any blocking operations (such as IndexedDB or checksumming) are run inside of the worker.
 
-The worker-pouch adapter passes [the full PouchDB test suite](https://travis-ci.org/nolanlawson/worker-pouch). It requires PouchDB 5.0.0+.
+The worker-pouch adapter passes [the full PouchDB test suite](https://travis-ci.org/pouchdb-community/worker-pouch). It requires PouchDB 5.0.0+.
 
 **Topics**
 
