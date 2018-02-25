@@ -1,3 +1,8 @@
+- 2.1.0
+  - ([#43](https://github.com/pouchdb-community/worker-pouch/issues/43)): Fix db.type() deprecation warning
+  - ([#34](https://github.com/pouchdb-community/worker-pouch/issues/34)): id() returns the db name instead of a uuid
+  - ([#24](https://github.com/pouchdb-community/worker-pouch/issues/24)): Pass `storage` option through to IDB
+  - ([#40](https://github.com/pouchdb-community/worker-pouch/pull/40)): Use `_interopDefault` on `require('pouchdb-promise')`
 - 2.0.0
   - BREAKING: support for PouchDB 6.0.0. For PouchDB <6, use worker-pouch <2.
 - 1.0.0
