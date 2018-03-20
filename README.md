@@ -1,6 +1,8 @@
 worker-pouch [![Build Status](https://travis-ci.org/pouchdb-community/worker-pouch.svg)](https://travis-ci.org/pouchdb-community/worker-pouch)
 =====
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/pouchdb-community/worker-pouch.svg)](https://greenkeeper.io/)
+
 ```js
 // This pouch is powered by Workers!
 var db = new PouchDB('mydb', {adapter: 'worker'});
